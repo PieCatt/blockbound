@@ -1,22 +1,17 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Eye } from "lucide-react";
-import sword from "@/assets/product-sword.jpg";
-import pickaxe from "@/assets/product-pickaxe.jpg";
-import armor from "@/assets/product-armor.jpg";
-import elytra from "@/assets/product-elytra.jpg";
-import book from "@/assets/product-book.jpg";
-import beacon from "@/assets/product-beacon.jpg";
-
-const products = [
-  { id: 1, name: "Diamond Sword Replica", category: "Koleksiyon", price: "₺899", img: sword, badge: "Yeni" },
-  { id: 2, name: "Golden Pickaxe Edition", category: "Premium", price: "₺1.249", img: pickaxe, badge: "Sınırlı" },
-  { id: 3, name: "Netherite Armor Figür", category: "Figür", price: "₺2.199", img: armor },
-  { id: 4, name: "Elytra Wings Poster", category: "Sanat", price: "₺349", img: elytra, badge: "İndirim" },
-  { id: 5, name: "Enchanted Book", category: "Aksesuar", price: "₺499", img: book },
-  { id: 6, name: "Glow Beacon Lamp", category: "Aydınlatma", price: "₺1.599", img: beacon, badge: "Popüler" },
-];
+import { products } from "@/data/products";
+import { useCart, formatPrice, type Product } from "@/context/CartContext";
+import ProductDialog from "./ProductDialog";
 
 const Products = () => {
+  const [showAll, setShowAll] = useState(false);
+  const [selected, setSelected] = useState<Product | null>(null);
+  const { addToCart } = useCart();
+
+  const visible = showAll ? products : products.slice(0, 6);
+
   return (
     <section id="products" className="relative py-24 md:py-32">
       <div className="container">
@@ -33,7 +28,7 @@ const Products = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((p, i) => (
+          {visible.map((p, i) => (
             <article
               key={p.id}
               className="group relative glass-card glow-border rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-elegant animate-fade-in-up"
@@ -55,16 +50,16 @@ const Products = () => {
                   </span>
                 )}
                 <div className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Button variant="hero" size="sm">
+                  <Button variant="hero" size="sm" onClick={() => addToCart(p)}>
                     <ShoppingCart className="mr-2 h-4 w-4" /> Sepete Ekle
                   </Button>
-                  <Button variant="outline" size="icon" aria-label="Ürünü görüntüle">
+                  <Button variant="outline" size="icon" aria-label="Ürünü görüntüle" onClick={() => setSelected(p)}>
                     <Eye className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
 
-              <div className="p-6">
+              <div className="p-6 cursor-pointer" onClick={() => setSelected(p)}>
                 <div className="text-xs font-semibold uppercase tracking-wider text-primary-glow mb-2">
                   {p.category}
                 </div>
@@ -72,7 +67,7 @@ const Products = () => {
                   {p.name}
                 </h3>
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-black gradient-text">{p.price}</span>
+                  <span className="text-2xl font-black gradient-text">{formatPrice(p.price)}</span>
                   <span className="text-xs text-muted-foreground">Stokta</span>
                 </div>
               </div>
@@ -81,9 +76,13 @@ const Products = () => {
         </div>
 
         <div className="text-center mt-14">
-          <Button variant="outline" size="lg">Tüm Koleksiyonu Gör</Button>
+          <Button variant="outline" size="lg" onClick={() => setShowAll((v) => !v)}>
+            {showAll ? "Daha Az Göster" : "Tüm Koleksiyonu Gör"}
+          </Button>
         </div>
       </div>
+
+      <ProductDialog product={selected} onClose={() => setSelected(null)} />
     </section>
   );
 };

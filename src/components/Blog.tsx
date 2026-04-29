@@ -1,30 +1,11 @@
+import { useState } from "react";
 import { ArrowUpRight, Calendar } from "lucide-react";
-
-const posts = [
-  {
-    title: "1.21 güncellemesi: Tüm yenilikler ve sırlar",
-    excerpt: "Trial Chambers, Breeze ve daha fazlası... Yeni sürümün getirdiği her şey.",
-    date: "12 Mart 2026",
-    category: "Güncelleme",
-    gradient: "from-primary/40 to-accent-purple/40",
-  },
-  {
-    title: "En iyi 10 redstone tasarımı",
-    excerpt: "Topluluğun paylaştığı en yaratıcı redstone makinelerinin derlemesi.",
-    date: "5 Mart 2026",
-    category: "Rehber",
-    gradient: "from-accent-cyan/40 to-primary/40",
-  },
-  {
-    title: "Speedrun rekorları nasıl kırılıyor?",
-    excerpt: "Dünya çapındaki speedrun camiasının teknikleri ve ipuçları.",
-    date: "28 Şubat 2026",
-    category: "Esports",
-    gradient: "from-accent-purple/40 to-accent-cyan/40",
-  },
-];
+import { posts, type BlogPost } from "@/data/posts";
+import BlogPostDialog from "./BlogPostDialog";
 
 const Blog = () => {
+  const [selected, setSelected] = useState<BlogPost | null>(null);
+
   return (
     <section id="blog" className="relative py-24 md:py-32">
       <div className="container">
@@ -45,7 +26,8 @@ const Blog = () => {
         <div className="grid md:grid-cols-3 gap-6">
           {posts.map((post, i) => (
             <article
-              key={post.title}
+              key={post.slug}
+              onClick={() => setSelected(post)}
               className="group glass-card glow-border rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 hover:-translate-y-2 animate-fade-in-up"
               style={{ animationDelay: `${i * 100}ms` }}
             >
@@ -77,6 +59,8 @@ const Blog = () => {
           ))}
         </div>
       </div>
+
+      <BlogPostDialog post={selected} onClose={() => setSelected(null)} />
     </section>
   );
 };
