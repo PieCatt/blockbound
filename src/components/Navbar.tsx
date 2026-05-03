@@ -42,8 +42,13 @@ const Navbar = () => {
       }`}
     >
       <div className="container flex items-center justify-between">
-        <a href="#home" className="flex items-center gap-2 group logo-mark" style={{ ['--logo' as never]: `url(${logo})` }}>
-          <span className="logo-image" aria-label="Blockbound Studios logo" role="img" />
+        <a href="#home" className="logo-mark group relative inline-flex items-center">
+          <span className="logo-bg" aria-hidden="true" />
+          <img
+            src={logo}
+            alt="Blockbound Studios logo"
+            className="relative h-12 w-auto object-contain transition-transform duration-500 group-hover:scale-105"
+          />
         </a>
 
         <nav className="hidden md:flex items-center gap-8">
