@@ -80,27 +80,36 @@
     background-image: var(--gradient-primary);
   }
 
-  .logo-mark .logo-bg {
+  .logo-mark { line-height: 0; }
+  .logo-mark .logo-text-overlay {
     position: absolute;
     inset: 0;
-    border-radius: 0.75rem;
+    pointer-events: none;
     background-image: linear-gradient(
       90deg,
-      hsl(210 100% 60% / 0.55),
-      hsl(195 100% 65% / 0.55),
-      hsl(265 85% 65% / 0.55),
-      hsl(210 100% 60% / 0.55),
-      hsl(195 100% 65% / 0.55),
-      hsl(265 85% 65% / 0.55)
+      hsl(210 100% 60%),
+      hsl(195 100% 70%),
+      hsl(265 90% 70%),
+      hsl(210 100% 60%),
+      hsl(195 100% 70%),
+      hsl(265 90% 70%)
     );
     background-size: 300% 100%;
     background-position: 0% 50%;
-    filter: blur(14px);
+    -webkit-mask-image: var(--logo-src), linear-gradient(90deg, transparent 0%, transparent 28%, #000 33%, #000 100%);
+            mask-image: var(--logo-src), linear-gradient(90deg, transparent 0%, transparent 28%, #000 33%, #000 100%);
+    -webkit-mask-repeat: no-repeat, no-repeat;
+            mask-repeat: no-repeat, no-repeat;
+    -webkit-mask-position: center, center;
+            mask-position: center, center;
+    -webkit-mask-size: contain, 100% 100%;
+            mask-size: contain, 100% 100%;
+    -webkit-mask-composite: source-in;
+            mask-composite: intersect;
     opacity: 0;
-    transition: opacity 0.5s ease, background-position 1.4s cubic-bezier(0.4, 0, 0.2, 1);
-    pointer-events: none;
+    transition: opacity 0.4s ease, background-position 1.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .logo-mark:hover .logo-bg {
+  .logo-mark:hover .logo-text-overlay {
     opacity: 1;
     background-position: 100% 50%;
   }
