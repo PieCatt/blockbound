@@ -46,8 +46,9 @@ const Navbar = () => {
           <img
             src={logo}
             alt="Blockbound Studios logo"
-            className="h-14 w-14 object-contain transition-all duration-500 ease-out group-hover:scale-125 group-hover:rotate-[18deg] group-hover:drop-shadow-[0_0_18px_hsl(var(--primary)/0.8)]"
+            className="h-10 w-10 object-contain transition-transform group-hover:scale-110 group-hover:rotate-6 duration-500"
           />
+          <span className="text-xl font-bold logo-text-gradient">blockbound.</span>
         </a>
 
         <nav className="hidden md:flex items-center gap-8">
