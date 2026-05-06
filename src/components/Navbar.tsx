@@ -50,7 +50,7 @@ const Navbar = () => {
           <img
             src={logo}
             alt="Blockbound Studios logo"
-            className="relative h-20 w-auto object-contain transition-transform duration-500 group-hover:scale-105"
+            className="relative h-10 w-auto object-contain"
           />
           <span className="logo-text-overlay" aria-hidden="true" />
         </a>
