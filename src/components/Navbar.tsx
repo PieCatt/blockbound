@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ChevronDown, Hammer, Map, Menu, Palette, Server, Wand2, X } from "lucide-react";
+import { ChevronDown, Hammer, Hash, Menu, MessageSquare, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
