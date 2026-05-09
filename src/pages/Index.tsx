@@ -1,8 +1,10 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import About from "@/components/About";
 import Products from "@/components/Products";
+import FreeProducts from "@/components/FreeProducts";
 import Blog from "@/components/Blog";
-import Contact from "@/components/Contact";
+import Social from "@/components/Social";
 import Footer from "@/components/Footer";
 import LiveChat from "@/components/LiveChat";
 import CartSheet from "@/components/CartSheet";
@@ -28,9 +30,11 @@ const Index = () => {
         <Navbar />
         <main>
           <Hero />
+          <About />
           <Products />
+          <FreeProducts />
           <Blog />
-          <Contact />
+          <Social />
         </main>
         <Footer />
         <LiveChat />

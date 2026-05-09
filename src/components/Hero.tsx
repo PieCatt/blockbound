@@ -39,9 +39,13 @@ const Hero = () => {
           </p>
 
           <div className="flex flex-wrap gap-4">
-            <Button variant="hero" size="xl" asChild>
+            <Button variant="hero" size="xl" asChild className="discover-btn group/btn relative overflow-hidden">
               <a href="#products">
-                Ürünleri Keşfet <ArrowRight className="ml-2" />
+                <span className="relative z-10 inline-flex items-center">
+                  Ürünleri Keşfet
+                  <ArrowRight className="ml-2 transition-transform duration-300 group-hover/btn:translate-x-1" />
+                </span>
+                <span className="discover-btn-shine" aria-hidden="true" />
               </a>
             </Button>
             <Button variant="outline" size="xl" asChild>

@@ -75,9 +75,14 @@ const Products = () => {
           ))}
         </div>
 
-        <div className="text-center mt-14">
+        <div className="text-center mt-14 flex flex-wrap items-center justify-center gap-4">
           <Button variant="outline" size="lg" onClick={() => setShowAll((v) => !v)}>
-            {showAll ? "Daha Az Göster" : "Tüm Koleksiyonu Gör"}
+            {showAll ? "Daha Az Göster" : "Daha Fazla Göster"}
+          </Button>
+          <Button variant="hero" size="lg" asChild>
+            <a href="/products" target="_blank" rel="noopener noreferrer">
+              Tüm Koleksiyonu Gör
+            </a>
           </Button>
         </div>
       </div>

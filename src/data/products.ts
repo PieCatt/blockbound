@@ -6,6 +6,17 @@ import book from "@/assets/product-book.jpg";
 import beacon from "@/assets/product-beacon.jpg";
 import type { Product } from "@/context/CartContext";
 
+export const categories = [
+  "Tümü",
+  "Koleksiyon",
+  "Premium",
+  "Figür",
+  "Sanat",
+  "Aksesuar",
+  "Aydınlatma",
+  "Kıyafet",
+] as const;
+
 export const products: Product[] = [
   {
     id: 1,
@@ -84,5 +95,35 @@ export const products: Product[] = [
     img: pickaxe,
     badge: "Premium",
     description: "El yapımı, 50 cm kanat açıklığında polyester reçine Ender Dragon heykel. Limited 100 adet.",
+  },
+];
+
+export const freeProducts: Product[] = [
+  {
+    id: 1001,
+    name: "Pixel Wallpaper Paketi",
+    category: "Dijital",
+    price: 0,
+    img: elytra,
+    badge: "Ücretsiz",
+    description: "4K çözünürlüğünde 12 adet Minecraft temalı duvar kağıdı paketi.",
+  },
+  {
+    id: 1002,
+    name: "Skin Şablon Seti",
+    category: "Dijital",
+    price: 0,
+    img: book,
+    badge: "Ücretsiz",
+    description: "Topluluğa açık 20 adet özgün karakter skin şablonu.",
+  },
+  {
+    id: 1003,
+    name: "Texture Pack Lite",
+    category: "Dijital",
+    price: 0,
+    img: beacon,
+    badge: "Ücretsiz",
+    description: "Stüdyomuzun hazırladığı hafif sürüm texture paketi. 32x çözünürlük.",
   },
 ];
