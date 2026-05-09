@@ -1,10 +1,9 @@
-import { Github, Instagram, Twitch, Twitter, Youtube } from "lucide-react";
+import { Github, Instagram, Twitter, Youtube } from "lucide-react";
 
 const socials = [
   { name: "Instagram", icon: Instagram, handle: "@blockbound", href: "#", color: "from-pink-500 to-purple-500" },
   { name: "YouTube", icon: Youtube, handle: "/blockboundstudios", href: "#", color: "from-red-500 to-orange-500" },
   { name: "Twitter", icon: Twitter, handle: "@blockbound", href: "#", color: "from-sky-500 to-blue-500" },
-  { name: "Twitch", icon: Twitch, handle: "/blockbound", href: "#", color: "from-purple-500 to-indigo-500" },
   { name: "GitHub", icon: Github, handle: "/blockbound", href: "#", color: "from-zinc-400 to-zinc-600" },
 ];
 
@@ -24,7 +23,7 @@ const Social = () => {
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {socials.map((s, i) => (
             <a
               key={s.name}

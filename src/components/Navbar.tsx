@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ChevronDown, Hammer, Map, Menu, Palette, Server, Wand2, X } from "lucide-react";
+import { ChevronDown, Hammer, Hash, Menu, MessageSquare, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -18,11 +18,9 @@ const links = [
 ];
 
 const tools = [
-  { href: "#skin-editor", label: "Skin Editör", icon: Palette, desc: "Karakter skinlerini özelleştir" },
-  { href: "#world-generator", label: "Dünya Üretici", icon: Map, desc: "Rastgele harita seedleri" },
-  { href: "#server-status", label: "Sunucu Durumu", icon: Server, desc: "Sunucularını anlık izle" },
   { href: "#crafting-helper", label: "Crafting Yardımcısı", icon: Hammer, desc: "Tarif ve malzeme hesaplayıcı" },
-  { href: "#enchant-calc", label: "Büyü Hesaplayıcı", icon: Wand2, desc: "En iyi enchant kombinasyonları" },
+  { href: "#hex-editor", label: "Hex Editör", icon: Hash, desc: "Renk kodlarını kolayca düzenle" },
+  { href: "#motd-maker", label: "MOTD Maker", icon: MessageSquare, desc: "Sunucu mesajını tasarla" },
 ];
 
 const Navbar = () => {

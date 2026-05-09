@@ -12,7 +12,7 @@ const FreeProducts = () => {
             <Gift className="h-4 w-4" /> Ücretsiz
           </div>
           <h2 className="text-4xl md:text-6xl font-black mb-4">
-            Topluluğumuza <span className="gradient-text">hediyemiz</span>
+            <span className="gradient-text">Ücretsiz</span> Ürünler
           </h2>
           <p className="text-lg text-muted-foreground">
             Stüdyomuzun hazırladığı ücretsiz dijital içerikleri keşfet ve hemen indir.
@@ -23,7 +23,7 @@ const FreeProducts = () => {
           {freeProducts.map((p, i) => (
             <article
               key={p.id}
-              className="group relative glass-card glow-border rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-elegant animate-fade-in-up"
+              className="group relative glass-card glow-border rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-elegant animate-fade-in-up flex flex-col"
               style={{ animationDelay: `${i * 100}ms` }}
             >
               <div className="relative aspect-[16/10] overflow-hidden bg-secondary/40">
@@ -38,7 +38,7 @@ const FreeProducts = () => {
                   {p.badge}
                 </span>
               </div>
-              <div className="p-6">
+              <div className="p-6 flex flex-col flex-1">
                 <div className="text-xs font-semibold uppercase tracking-wider text-primary-glow mb-2">
                   {p.category}
                 </div>
@@ -49,7 +49,7 @@ const FreeProducts = () => {
                 <Button
                   variant="hero"
                   size="sm"
-                  className="w-full"
+                  className="w-full mt-auto"
                   onClick={() => toast.success(`${p.name} indiriliyor...`)}
                 >
                   <Download className="mr-2 h-4 w-4" /> Ücretsiz İndir
