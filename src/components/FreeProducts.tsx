@@ -12,7 +12,7 @@ const FreeProducts = () => {
             <Gift className="h-4 w-4" /> Ücretsiz
           </div>
           <h2 className="text-4xl md:text-6xl font-black mb-4">
-            Topluluğumuza <span className="gradient-text">hediyemiz</span>
+            <span className="gradient-text">Ücretsiz</span> Ürünler
           </h2>
           <p className="text-lg text-muted-foreground">
             Stüdyomuzun hazırladığı ücretsiz dijital içerikleri keşfet ve hemen indir.
