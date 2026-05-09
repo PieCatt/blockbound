@@ -16,8 +16,8 @@ const About = () => {
             <div className="text-sm font-semibold uppercase tracking-widest text-primary-glow mb-4">
               // Hakkımızda
             </div>
-            <h2 className="text-4xl md:text-6xl font-black mb-6">
-              Blok blok <span className="gradient-text">hayal et</span>, biz inşa edelim
+            <h2 className="text-3xl md:text-4xl font-black mb-6">
+              <span className="gradient-text">Hayal et</span>, biz inşa edelim
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed mb-6">
               Blockbound Studios; Minecraft topluluğu için premium koleksiyon parçaları, sınırlı seri merch ve özgün dijital içerikler üreten bağımsız bir tasarım stüdyosudur. Her ürünümüz, oyunseverlerin tutkusunu fiziksel ve dijital dünyada yansıtmak için titizlikle tasarlanır.
