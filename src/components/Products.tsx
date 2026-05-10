@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Eye } from "lucide-react";
-import { products } from "@/data/products";
+import { ShoppingCart, Eye, Loader2 } from "lucide-react";
+import { useProducts } from "@/hooks/useContent";
 import { useCart, formatPrice, type Product } from "@/context/CartContext";
 import ProductDialog from "./ProductDialog";
 
@@ -9,6 +9,7 @@ const Products = () => {
   const [showAll, setShowAll] = useState(false);
   const [selected, setSelected] = useState<Product | null>(null);
   const { addToCart } = useCart();
+  const { data: products = [], isLoading } = useProducts();
 
   const visible = showAll ? products : products.slice(0, 6);
 
@@ -27,6 +28,9 @@ const Products = () => {
           </p>
         </div>
 
+        {isLoading ? (
+          <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary-glow" /></div>
+        ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {visible.map((p, i) => (
             <article
@@ -39,8 +43,6 @@ const Products = () => {
                   src={p.img}
                   alt={p.name}
                   loading="lazy"
-                  width={800}
-                  height={800}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-80" />
@@ -74,11 +76,14 @@ const Products = () => {
             </article>
           ))}
         </div>
+        )}
 
         <div className="text-center mt-14 flex flex-wrap items-center justify-center gap-4">
-          <Button variant="outline" size="lg" onClick={() => setShowAll((v) => !v)}>
-            {showAll ? "Daha Az Göster" : "Daha Fazla Göster"}
-          </Button>
+          {products.length > 6 && (
+            <Button variant="outline" size="lg" onClick={() => setShowAll((v) => !v)}>
+              {showAll ? "Daha Az Göster" : "Daha Fazla Göster"}
+            </Button>
+          )}
           <Button variant="hero" size="lg" asChild>
             <a href="/products" target="_blank" rel="noopener noreferrer">
               Tüm Koleksiyonu Gör

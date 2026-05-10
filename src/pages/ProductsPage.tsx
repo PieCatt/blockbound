@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Eye, ShoppingCart } from "lucide-react";
-import { categories, products } from "@/data/products";
+import { ArrowLeft, Eye, Loader2, ShoppingCart } from "lucide-react";
+import { useProducts } from "@/hooks/useContent";
 import { CartProvider, formatPrice, useCart, type Product } from "@/context/CartContext";
 import ProductDialog from "@/components/ProductDialog";
 import CartSheet from "@/components/CartSheet";
@@ -12,10 +12,17 @@ const Catalog = () => {
   const [active, setActive] = useState<string>("Tümü");
   const [selected, setSelected] = useState<Product | null>(null);
   const { addToCart } = useCart();
+  const { data: products = [], isLoading } = useProducts();
+
+  const categories = useMemo(() => {
+    const set = new Set<string>(["Tümü"]);
+    products.forEach((p) => set.add(p.category));
+    return Array.from(set);
+  }, [products]);
 
   const filtered = useMemo(
     () => (active === "Tümü" ? products : products.filter((p) => p.category === active)),
-    [active],
+    [active, products],
   );
 
   return (
@@ -51,6 +58,9 @@ const Catalog = () => {
         ))}
       </div>
 
+      {isLoading ? (
+        <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary-glow" /></div>
+      ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filtered.map((p, i) => (
           <article
@@ -93,6 +103,7 @@ const Catalog = () => {
           </article>
         ))}
       </div>
+      )}
 
       <ProductDialog product={selected} onClose={() => setSelected(null)} />
     </section>

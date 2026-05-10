@@ -1,9 +1,9 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Calendar, Clock } from "lucide-react";
-import type { BlogPost } from "@/data/posts";
+import type { Post } from "@/hooks/useContent";
 
 type Props = {
-  post: BlogPost | null;
+  post: Post | null;
   onClose: () => void;
 };
 
@@ -32,7 +32,7 @@ const BlogPostDialog = ({ post, onClose }: Props) => {
 
           <div className="flex items-center gap-4 text-xs text-muted-foreground mt-4 mb-6">
             <span className="flex items-center gap-1.5"><Calendar className="h-3 w-3" /> {post.date}</span>
-            <span className="flex items-center gap-1.5"><Clock className="h-3 w-3" /> {post.readTime}</span>
+            <span className="flex items-center gap-1.5"><Clock className="h-3 w-3" /> {post.read_time}</span>
           </div>
 
           <div className="space-y-4 text-muted-foreground leading-relaxed">
