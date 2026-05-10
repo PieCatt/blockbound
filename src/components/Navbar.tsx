@@ -11,9 +11,7 @@ import logo from "@/assets/blockbound-logo.png";
 
 const links = [
   { href: "#home", label: "Anasayfa" },
-  { href: "#about", label: "Hakkımızda" },
   { href: "#products", label: "Ürünler" },
-  { href: "#free", label: "Ücretsiz" },
   { href: "#blog", label: "Blog" },
 ];
 
