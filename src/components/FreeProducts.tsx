@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { Download, Gift } from "lucide-react";
-import { freeProducts } from "@/data/products";
+import { Download, Gift, Loader2 } from "lucide-react";
+import { useFreeProducts } from "@/hooks/useContent";
 import { toast } from "sonner";
 
 const FreeProducts = () => {
+  const { data: items = [], isLoading } = useFreeProducts();
+
   return (
     <section id="free" className="relative py-24 md:py-32">
       <div className="container">
@@ -19,8 +21,11 @@ const FreeProducts = () => {
           </p>
         </div>
 
+        {isLoading ? (
+          <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary-glow" /></div>
+        ) : (
         <div className="grid md:grid-cols-3 gap-6">
-          {freeProducts.map((p, i) => (
+          {items.map((p, i) => (
             <article
               key={p.id}
               className="group relative glass-card glow-border rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-elegant animate-fade-in-up flex flex-col"
@@ -34,9 +39,11 @@ const FreeProducts = () => {
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-80" />
-                <span className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold bg-gradient-primary text-primary-foreground shadow-glow">
-                  {p.badge}
-                </span>
+                {p.badge && (
+                  <span className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold bg-gradient-primary text-primary-foreground shadow-glow">
+                    {p.badge}
+                  </span>
+                )}
               </div>
               <div className="p-6 flex flex-col flex-1">
                 <div className="text-xs font-semibold uppercase tracking-wider text-primary-glow mb-2">
@@ -58,6 +65,7 @@ const FreeProducts = () => {
             </article>
           ))}
         </div>
+        )}
       </div>
     </section>
   );

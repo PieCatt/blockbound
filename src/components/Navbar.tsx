@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { ChevronDown, Hammer, Hash, Menu, MessageSquare, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import logo from "@/assets/blockbound-logo.png";
+import { useAuth } from "@/context/AuthContext";
 
 const links = [
   { href: "/", label: "Anasayfa" },
@@ -25,6 +27,7 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
+  const { isAdmin } = useAuth();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -93,9 +96,14 @@ const Navbar = () => {
           </DropdownMenu>
         </nav>
 
-        <div className="hidden md:block">
+        <div className="hidden md:flex items-center gap-2">
+          {isAdmin && (
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/admin">Admin</Link>
+            </Button>
+          )}
           <Button variant="hero" size="sm" asChild>
-            <a href="#products">Mağazaya Git</a>
+            <a href="/products">Mağazaya Git</a>
           </Button>
         </div>
 

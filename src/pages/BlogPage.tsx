@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, ArrowUpRight } from "lucide-react";
-import { posts, type BlogPost } from "@/data/posts";
+import { ArrowLeft, Calendar, ArrowUpRight, Loader2 } from "lucide-react";
+import { usePosts, type Post } from "@/hooks/useContent";
 import BlogPostDialog from "@/components/BlogPostDialog";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -9,7 +9,8 @@ import { CartProvider } from "@/context/CartContext";
 import CartSheet from "@/components/CartSheet";
 
 const BlogList = () => {
-  const [selected, setSelected] = useState<BlogPost | null>(null);
+  const [selected, setSelected] = useState<Post | null>(null);
+  const { data: posts = [], isLoading } = usePosts();
 
   return (
     <section className="container pt-32 pb-24">
@@ -28,10 +29,13 @@ const BlogList = () => {
         </p>
       </div>
 
+      {isLoading ? (
+        <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary-glow" /></div>
+      ) : (
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {posts.map((post, i) => (
           <article
-            key={post.slug}
+            key={post.id}
             onClick={() => setSelected(post)}
             className="group glass-card glow-border rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 hover:-translate-y-2 animate-fade-in-up"
             style={{ animationDelay: `${i * 100}ms` }}
@@ -62,6 +66,7 @@ const BlogList = () => {
           </article>
         ))}
       </div>
+      )}
 
       <BlogPostDialog post={selected} onClose={() => setSelected(null)} />
     </section>

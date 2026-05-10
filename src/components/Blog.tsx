@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { ArrowUpRight, Calendar } from "lucide-react";
-import { posts, type BlogPost } from "@/data/posts";
+import { ArrowUpRight, Calendar, Loader2 } from "lucide-react";
+import { usePosts, type Post } from "@/hooks/useContent";
 import BlogPostDialog from "./BlogPostDialog";
 
 const Blog = () => {
-  const [selected, setSelected] = useState<BlogPost | null>(null);
+  const [selected, setSelected] = useState<Post | null>(null);
+  const { data: posts = [], isLoading } = usePosts();
+
+  const visible = posts.slice(0, 3);
 
   return (
     <section id="blog" className="relative py-24 md:py-32">
@@ -23,10 +26,13 @@ const Blog = () => {
           </p>
         </div>
 
+        {isLoading ? (
+          <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary-glow" /></div>
+        ) : (
         <div className="grid md:grid-cols-3 gap-6">
-          {posts.map((post, i) => (
+          {visible.map((post, i) => (
             <article
-              key={post.slug}
+              key={post.id}
               onClick={() => setSelected(post)}
               className="group glass-card glow-border rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 hover:-translate-y-2 animate-fade-in-up"
               style={{ animationDelay: `${i * 100}ms` }}
@@ -58,6 +64,7 @@ const Blog = () => {
             </article>
           ))}
         </div>
+        )}
       </div>
 
       <BlogPostDialog post={selected} onClose={() => setSelected(null)} />

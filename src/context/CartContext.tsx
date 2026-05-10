@@ -2,13 +2,14 @@ import { createContext, useContext, useMemo, useState, ReactNode } from "react";
 import { toast } from "sonner";
 
 export type Product = {
-  id: number;
+  id: string;
   name: string;
   category: string;
   price: number;
   img: string;
-  badge?: string;
+  badge?: string | null;
   description: string;
+  is_free?: boolean;
 };
 
 type CartItem = Product & { quantity: number };
@@ -18,8 +19,8 @@ type CartCtx = {
   cartOpen: boolean;
   setCartOpen: (v: boolean) => void;
   addToCart: (p: Product) => void;
-  removeFromCart: (id: number) => void;
-  updateQty: (id: number, qty: number) => void;
+  removeFromCart: (id: string) => void;
+  updateQty: (id: string, qty: number) => void;
   clear: () => void;
   total: number;
   count: number;
@@ -42,11 +43,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     toast.success(`${p.name} sepete eklendi!`);
   };
 
-  const removeFromCart = (id: number) => {
+  const removeFromCart = (id: string) => {
     setItems((prev) => prev.filter((i) => i.id !== id));
   };
 
-  const updateQty = (id: number, qty: number) => {
+  const updateQty = (id: string, qty: number) => {
     if (qty <= 0) return removeFromCart(id);
     setItems((prev) => prev.map((i) => (i.id === id ? { ...i, quantity: qty } : i)));
   };
