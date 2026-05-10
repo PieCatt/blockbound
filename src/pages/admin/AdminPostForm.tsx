@@ -87,8 +87,13 @@ const AdminPostForm = () => {
     }
     setBusy(true);
     const payload = {
-      ...parsed.data,
+      title: parsed.data.title,
       slug: parsed.data.slug || slugify(parsed.data.title),
+      excerpt: parsed.data.excerpt,
+      category: parsed.data.category,
+      date: parsed.data.date,
+      read_time: parsed.data.read_time,
+      gradient: parsed.data.gradient,
       content: parsed.data.content.split(/\n\n+/).map((p) => p.trim()).filter(Boolean),
     };
 
