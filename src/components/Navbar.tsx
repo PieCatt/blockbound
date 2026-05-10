@@ -11,9 +11,7 @@ import logo from "@/assets/blockbound-logo.png";
 
 const links = [
   { href: "#home", label: "Anasayfa" },
-  { href: "#about", label: "Hakkımızda" },
   { href: "#products", label: "Ürünler" },
-  { href: "#free", label: "Ücretsiz" },
   { href: "#blog", label: "Blog" },
 ];
 
@@ -65,7 +63,7 @@ const Navbar = () => {
             </a>
           ))}
 
-          <DropdownMenu>
+          <DropdownMenu open={toolsOpen} onOpenChange={setToolsOpen}>
             <DropdownMenuTrigger className="group flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors outline-none">
               Araçlar
               <ChevronDown className="h-4 w-4 transition-transform duration-300 group-data-[state=open]:rotate-180" />
