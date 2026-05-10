@@ -10,9 +10,9 @@ import {
 import logo from "@/assets/blockbound-logo.png";
 
 const links = [
-  { href: "#home", label: "Anasayfa" },
-  { href: "#products", label: "Ürünler" },
-  { href: "#blog", label: "Blog" },
+  { href: "/", label: "Anasayfa" },
+  { href: "/products", label: "Ürünler" },
+  { href: "/blog", label: "Blog" },
 ];
 
 const tools = [
