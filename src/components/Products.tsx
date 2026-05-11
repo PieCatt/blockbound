@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart, Eye, Loader2 } from "lucide-react";
 import { useProducts } from "@/hooks/useContent";
 import { useCart, formatPrice, type Product } from "@/context/CartContext";
+import { getTag, sortByTagPriority } from "@/lib/productTags";
 import ProductDialog from "./ProductDialog";
 
 const Products = () => {
@@ -11,7 +12,8 @@ const Products = () => {
   const { addToCart } = useCart();
   const { data: products = [], isLoading } = useProducts();
 
-  const visible = showAll ? products : products.slice(0, 6);
+  const sorted = sortByTagPriority(products);
+  const visible = showAll ? sorted : sorted.slice(0, 6);
 
   return (
     <section id="products" className="relative py-24 md:py-32">
