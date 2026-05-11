@@ -104,7 +104,7 @@ const Catalog = () => {
               </div>
             </div>
           </article>
-        ))}
+          );})}
       </div>
       )}
 
