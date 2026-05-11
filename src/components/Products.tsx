@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart, Eye, Loader2 } from "lucide-react";
 import { useProducts } from "@/hooks/useContent";
 import { useCart, formatPrice, type Product } from "@/context/CartContext";
+import { getTag, sortByTagPriority } from "@/lib/productTags";
 import ProductDialog from "./ProductDialog";
 
 const Products = () => {
@@ -11,7 +12,8 @@ const Products = () => {
   const { addToCart } = useCart();
   const { data: products = [], isLoading } = useProducts();
 
-  const visible = showAll ? products : products.slice(0, 6);
+  const sorted = sortByTagPriority(products);
+  const visible = showAll ? sorted : sorted.slice(0, 6);
 
   return (
     <section id="products" className="relative py-24 md:py-32">
@@ -32,10 +34,12 @@ const Products = () => {
           <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary-glow" /></div>
         ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {visible.map((p, i) => (
+          {visible.map((p, i) => {
+            const tag = getTag(p.badge);
+            return (
             <article
               key={p.id}
-              className="group relative glass-card glow-border rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-elegant animate-fade-in-up"
+              className={`group relative glass-card glow-border rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-elegant animate-fade-in-up ${tag?.cardClass ?? ""}`}
               style={{ animationDelay: `${i * 80}ms` }}
             >
               <div className="relative aspect-square overflow-hidden bg-secondary/40">
@@ -47,7 +51,7 @@ const Products = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-80" />
                 {p.badge && (
-                  <span className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold bg-gradient-primary text-primary-foreground shadow-glow">
+                  <span className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold ${tag?.badgeClass ?? "bg-gradient-primary text-primary-foreground shadow-glow"}`}>
                     {p.badge}
                   </span>
                 )}
@@ -74,7 +78,7 @@ const Products = () => {
                 </div>
               </div>
             </article>
-          ))}
+          );})}
         </div>
         )}
 

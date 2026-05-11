@@ -6,11 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowLeft, Loader2, Save } from "lucide-react";
 import { z } from "zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { PRODUCT_TAGS } from "@/lib/productTags";
 
 const schema = z.object({
   name: z.string().trim().min(2, "Ad çok kısa").max(150),
@@ -119,8 +121,17 @@ const AdminProductForm = () => {
             <Input type="number" min={0} value={form.price} onChange={(e) => update("price", e.target.value)} disabled={form.is_free} />
           </div>
           <div className="space-y-2">
-            <Label>Rozet (opsiyonel)</Label>
-            <Input value={form.badge} onChange={(e) => update("badge", e.target.value)} placeholder="Yeni, Sınırlı..." />
+            <Label>Etiket (opsiyonel)</Label>
+            <Select value={form.badge || "none"} onValueChange={(v) => update("badge", v === "none" ? "" : v)}>
+              <SelectTrigger><SelectValue placeholder="Etiket seç" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Etiket yok</SelectItem>
+                {PRODUCT_TAGS.map((t) => (
+                  <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">"Çok Satan" ve "Yeni Çıkan" ana sayfada öncelikli gösterilir.</p>
           </div>
           <div className="space-y-2">
             <Label>Görsel URL</Label>
