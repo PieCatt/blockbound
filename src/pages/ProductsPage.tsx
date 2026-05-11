@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Eye, Loader2, ShoppingCart } from "lucide-react";
 import { useProducts } from "@/hooks/useContent";
 import { CartProvider, formatPrice, useCart, type Product } from "@/context/CartContext";
+import { getTag } from "@/lib/productTags";
 import ProductDialog from "@/components/ProductDialog";
 import CartSheet from "@/components/CartSheet";
 import Navbar from "@/components/Navbar";
