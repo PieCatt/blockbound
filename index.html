@@ -17,9 +17,41 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@Lovable" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <style>
+      #app-loader {
+        position: fixed; inset: 0; z-index: 9999;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 1.25rem;
+        background: #0e1322;
+        background-image:
+          radial-gradient(circle at 20% 10%, rgba(51,153,255,0.12), transparent 40%),
+          radial-gradient(circle at 80% 80%, rgba(168,85,247,0.12), transparent 40%);
+        color: #e6edf7;
+        font-family: ui-sans-serif, system-ui, sans-serif;
+        transition: opacity 0.5s ease;
+      }
+      #app-loader.hide { opacity: 0; pointer-events: none; }
+      .app-loader-spinner {
+        width: 56px; height: 56px; border-radius: 50%;
+        border: 3px solid rgba(255,255,255,0.1);
+        border-top-color: #5cbdff;
+        border-right-color: #a78bfa;
+        animation: app-loader-spin 0.9s linear infinite;
+      }
+      .app-loader-text {
+        font-weight: 800; letter-spacing: 0.02em; font-size: 1rem;
+        background: linear-gradient(90deg,#5cbdff,#a78bfa);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      @keyframes app-loader-spin { to { transform: rotate(360deg); } }
+    </style>
   </head>
 
   <body>
+    <div id="app-loader">
+      <div class="app-loader-spinner"></div>
+      <div class="app-loader-text">Blockbound yükleniyor…</div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
