@@ -121,8 +121,17 @@ const AdminProductForm = () => {
             <Input type="number" min={0} value={form.price} onChange={(e) => update("price", e.target.value)} disabled={form.is_free} />
           </div>
           <div className="space-y-2">
-            <Label>Rozet (opsiyonel)</Label>
-            <Input value={form.badge} onChange={(e) => update("badge", e.target.value)} placeholder="Yeni, Sınırlı..." />
+            <Label>Etiket (opsiyonel)</Label>
+            <Select value={form.badge || "none"} onValueChange={(v) => update("badge", v === "none" ? "" : v)}>
+              <SelectTrigger><SelectValue placeholder="Etiket seç" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Etiket yok</SelectItem>
+                {PRODUCT_TAGS.map((t) => (
+                  <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">"Çok Satan" ve "Yeni Çıkan" ana sayfada öncelikli gösterilir.</p>
           </div>
           <div className="space-y-2">
             <Label>Görsel URL</Label>
