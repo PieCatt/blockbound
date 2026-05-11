@@ -6,11 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowLeft, Loader2, Save } from "lucide-react";
 import { z } from "zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { PRODUCT_TAGS } from "@/lib/productTags";
 
 const schema = z.object({
   name: z.string().trim().min(2, "Ad çok kısa").max(150),
