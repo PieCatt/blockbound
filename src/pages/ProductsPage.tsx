@@ -69,7 +69,7 @@ const Catalog = () => {
           <article
             key={p.id}
             className={`group relative glass-card glow-border rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-elegant animate-fade-in-up ${tag?.cardClass ?? ""}`}
-            style={{ animationDelay: `${i * 60}ms` }}
+            style={{ animationDelay: `${i * 60}ms`, ...(tag ? { ["--tag-color" as any]: tag.borderColor } : {}) }}
           >
             <div className="relative aspect-square overflow-hidden bg-secondary/40">
               <img
