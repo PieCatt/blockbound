@@ -62,7 +62,10 @@ export type Database = {
           category: string
           created_at: string
           description: string
+          embed_html: string | null
+          features: string[]
           id: string
+          images: string[]
           img: string
           is_free: boolean
           name: string
@@ -74,7 +77,10 @@ export type Database = {
           category?: string
           created_at?: string
           description?: string
+          embed_html?: string | null
+          features?: string[]
           id?: string
+          images?: string[]
           img?: string
           is_free?: boolean
           name: string
@@ -86,7 +92,10 @@ export type Database = {
           category?: string
           created_at?: string
           description?: string
+          embed_html?: string | null
+          features?: string[]
           id?: string
+          images?: string[]
           img?: string
           is_free?: boolean
           name?: string

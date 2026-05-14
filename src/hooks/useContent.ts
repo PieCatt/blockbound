@@ -20,9 +20,12 @@ const mapProduct = (row: any): Product => ({
   category: row.category,
   price: Number(row.price),
   img: row.img,
+  images: Array.isArray(row.images) ? row.images : [],
   badge: row.badge,
   description: row.description,
   is_free: row.is_free,
+  features: Array.isArray(row.features) ? row.features : [],
+  embed_html: row.embed_html ?? null,
 });
 
 export const useProducts = () =>

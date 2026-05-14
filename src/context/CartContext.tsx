@@ -7,9 +7,12 @@ export type Product = {
   category: string;
   price: number;
   img: string;
+  images?: string[];
   badge?: string | null;
   description: string;
   is_free?: boolean;
+  features?: string[];
+  embed_html?: string | null;
 };
 
 type CartItem = Product & { quantity: number };

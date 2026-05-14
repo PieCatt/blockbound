@@ -9,19 +9,21 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft, Loader2, Save } from "lucide-react";
+import { ArrowLeft, Loader2, Plus, Save, Trash2 } from "lucide-react";
 import { z } from "zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { PRODUCT_TAGS } from "@/lib/productTags";
+import { DEFAULT_PRODUCT_FEATURES, DEFAULT_PRODUCT_IMAGE } from "@/lib/productDefaults";
 
 const schema = z.object({
   name: z.string().trim().min(2, "Ad çok kısa").max(150),
   category: z.string().trim().min(1).max(60),
   price: z.coerce.number().min(0),
   badge: z.string().trim().max(40).optional().or(z.literal("")),
-  img: z.string().trim().url("Geçerli bir görsel URL'si gir").max(500),
+  img: z.string().trim().max(500),
   description: z.string().trim().max(2000),
   is_free: z.boolean(),
+  embed_html: z.string().trim().max(4000),
 });
 
 const AdminProductForm = () => {
@@ -40,7 +42,10 @@ const AdminProductForm = () => {
     img: "",
     description: "",
     is_free: false,
+    embed_html: "",
   });
+  const [images, setImages] = useState<string[]>([]);
+  const [features, setFeatures] = useState<string[]>(DEFAULT_PRODUCT_FEATURES);
 
   useEffect(() => {
     document.title = isNew ? "Yeni Ürün — Admin" : "Ürünü Düzenle — Admin";
@@ -59,7 +64,11 @@ const AdminProductForm = () => {
         img: data.img,
         description: data.description,
         is_free: data.is_free,
+        embed_html: (data as any).embed_html ?? "",
       });
+      setImages(Array.isArray((data as any).images) ? (data as any).images : []);
+      const f = (data as any).features;
+      setFeatures(Array.isArray(f) && f.length > 0 ? f : DEFAULT_PRODUCT_FEATURES);
       setLoading(false);
     });
   }, [id, isNew, navigate]);
@@ -73,14 +82,19 @@ const AdminProductForm = () => {
       return;
     }
     setBusy(true);
+    const cleanImages = images.map((s) => s.trim()).filter(Boolean);
+    const cleanFeatures = features.map((s) => s.trim()).filter(Boolean);
     const payload = {
       name: parsed.data.name,
       category: parsed.data.category,
       price: parsed.data.is_free ? 0 : parsed.data.price,
       badge: parsed.data.badge || null,
-      img: parsed.data.img,
+      img: parsed.data.img.trim() || DEFAULT_PRODUCT_IMAGE,
       description: parsed.data.description,
       is_free: parsed.data.is_free,
+      images: cleanImages,
+      features: cleanFeatures.length > 0 ? cleanFeatures : DEFAULT_PRODUCT_FEATURES,
+      embed_html: parsed.data.embed_html.trim() || null,
     };
 
     const { error } = isNew
@@ -133,21 +147,78 @@ const AdminProductForm = () => {
             </Select>
             <p className="text-xs text-muted-foreground">"Çok Satan" ve "Yeni Çıkan" ana sayfada öncelikli gösterilir.</p>
           </div>
-          <div className="space-y-2">
-            <Label>Görsel URL</Label>
-            <Input value={form.img} onChange={(e) => update("img", e.target.value)} placeholder="https://..." />
+          <div className="space-y-2 md:col-span-2">
+            <Label>Ana görsel URL (boş bırakırsan varsayılan görsel kullanılır)</Label>
+            <Input value={form.img} onChange={(e) => update("img", e.target.value)} placeholder="https://... (opsiyonel)" />
           </div>
         </div>
 
-        {form.img && (
-          <div className="rounded-xl overflow-hidden border border-border/40 bg-secondary/30 max-w-xs">
-            <img src={form.img} alt="önizleme" className="w-full h-40 object-cover" />
+        {(form.img || images.length > 0) && (
+          <div className="flex flex-wrap gap-2">
+            {[form.img, ...images].filter(Boolean).map((src, i) => (
+              <div key={src + i} className="rounded-lg overflow-hidden border border-border/40 bg-secondary/30 w-24 h-24">
+                <img src={src} alt="önizleme" className="w-full h-full object-cover" />
+              </div>
+            ))}
           </div>
         )}
 
         <div className="space-y-2">
+          <Label>Ek görseller (galeri)</Label>
+          <p className="text-xs text-muted-foreground">Ana görsele ek olarak ürün ayrıntılarında galeri olarak gösterilir.</p>
+          <div className="space-y-2">
+            {images.map((src, i) => (
+              <div key={i} className="flex gap-2">
+                <Input
+                  value={src}
+                  placeholder="https://..."
+                  onChange={(e) => setImages((arr) => arr.map((v, j) => (j === i ? e.target.value : v)))}
+                />
+                <Button type="button" variant="outline" size="icon" onClick={() => setImages((arr) => arr.filter((_, j) => j !== i))}>
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+            <Button type="button" variant="outline" size="sm" onClick={() => setImages((arr) => [...arr, ""])}>
+              <Plus className="h-4 w-4 mr-2" /> Görsel ekle
+            </Button>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Embed (sadece ürün ayrıntıları açılınca görünür)</Label>
+          <p className="text-xs text-muted-foreground">YouTube/iframe/video HTML'i yapıştırabilirsin. Galerinin en üstünde görünür.</p>
+          <Textarea
+            rows={3}
+            value={form.embed_html}
+            onChange={(e) => update("embed_html", e.target.value)}
+            placeholder='<iframe src="..." allowfullscreen></iframe>'
+          />
+        </div>
+
+        <div className="space-y-2">
           <Label>Açıklama</Label>
           <Textarea rows={4} value={form.description} onChange={(e) => update("description", e.target.value)} />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Özellikler (ürün ayrıntılarında listelenir)</Label>
+          <div className="space-y-2">
+            {features.map((f, i) => (
+              <div key={i} className="flex gap-2">
+                <Input
+                  value={f}
+                  onChange={(e) => setFeatures((arr) => arr.map((v, j) => (j === i ? e.target.value : v)))}
+                />
+                <Button type="button" variant="outline" size="icon" onClick={() => setFeatures((arr) => arr.filter((_, j) => j !== i))}>
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+            <Button type="button" variant="outline" size="sm" onClick={() => setFeatures((arr) => [...arr, ""])}>
+              <Plus className="h-4 w-4 mr-2" /> Özellik ekle
+            </Button>
+          </div>
         </div>
 
         <div className="flex items-center gap-3 p-4 rounded-xl bg-secondary/40">

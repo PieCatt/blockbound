@@ -1,7 +1,9 @@
+import { useEffect, useMemo, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Check, ShoppingCart, Truck, ShieldCheck } from "lucide-react";
+import { Check, ShoppingCart } from "lucide-react";
 import { formatPrice, useCart, type Product } from "@/context/CartContext";
+import { DEFAULT_PRODUCT_FEATURES } from "@/lib/productDefaults";
 
 type Props = {
   product: Product | null;
@@ -11,28 +13,58 @@ type Props = {
 const ProductDialog = ({ product, onClose }: Props) => {
   const { addToCart, setCartOpen } = useCart();
 
+  const gallery = useMemo(() => {
+    if (!product) return [] as string[];
+    const extras = (product.images ?? []).filter(Boolean);
+    const all = [product.img, ...extras].filter((v, i, a) => v && a.indexOf(v) === i);
+    return all;
+  }, [product]);
+
+  const [active, setActive] = useState(0);
+  useEffect(() => setActive(0), [product?.id]);
+
   if (!product) return null;
 
-  const handleAdd = () => {
-    addToCart(product);
-  };
+  const features = (product.features && product.features.length > 0)
+    ? product.features
+    : DEFAULT_PRODUCT_FEATURES;
 
-  const handleBuy = () => {
-    addToCart(product);
-    onClose();
-    setCartOpen(true);
-  };
+  const handleAdd = () => addToCart(product);
+  const handleBuy = () => { addToCart(product); onClose(); setCartOpen(true); };
 
   return (
     <Dialog open={!!product} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-4xl glass-card border-border/60 p-0 overflow-hidden">
+      <DialogContent className="max-w-4xl glass-card border-border/60 p-0 overflow-hidden max-h-[90vh] overflow-y-auto">
         <div className="grid md:grid-cols-2">
-          <div className="relative aspect-square bg-secondary/40 overflow-hidden">
-            <img src={product.img} alt={product.name} className="w-full h-full object-cover" />
-            {product.badge && (
-              <span className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold bg-gradient-primary text-primary-foreground shadow-glow">
-                {product.badge}
-              </span>
+          <div className="bg-secondary/40">
+            {product.embed_html && (
+              <div
+                className="w-full aspect-video bg-black [&_iframe]:w-full [&_iframe]:h-full [&_video]:w-full [&_video]:h-full"
+                dangerouslySetInnerHTML={{ __html: product.embed_html }}
+              />
+            )}
+            <div className="relative aspect-square overflow-hidden">
+              <img src={gallery[active] ?? product.img} alt={product.name} className="w-full h-full object-cover" />
+              {product.badge && (
+                <span className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold bg-gradient-primary text-primary-foreground shadow-glow">
+                  {product.badge}
+                </span>
+              )}
+            </div>
+            {gallery.length > 1 && (
+              <div className="flex gap-2 p-3 overflow-x-auto">
+                {gallery.map((src, i) => (
+                  <button
+                    key={src + i}
+                    onClick={() => setActive(i)}
+                    className={`shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition ${
+                      active === i ? "border-primary-glow" : "border-transparent opacity-70 hover:opacity-100"
+                    }`}
+                  >
+                    <img src={src} alt={`${product.name} ${i + 1}`} className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
             )}
           </div>
 
@@ -49,24 +81,13 @@ const ProductDialog = ({ product, onClose }: Props) => {
             <p className="text-muted-foreground mt-5 leading-relaxed">{product.description}</p>
 
             <ul className="mt-6 space-y-2 text-sm">
-              {["Stokta mevcut", "24 ay garanti", "Orijinal lisanslı ürün"].map((f) => (
+              {features.map((f) => (
                 <li key={f} className="flex items-center gap-2 text-muted-foreground">
                   <Check className="h-4 w-4 text-primary-glow" />
                   {f}
                 </li>
               ))}
             </ul>
-
-            <div className="grid grid-cols-2 gap-3 mt-6 text-xs">
-              <div className="flex items-center gap-2 p-3 rounded-lg bg-secondary/40">
-                <Truck className="h-4 w-4 text-primary-glow" />
-                Ücretsiz kargo
-              </div>
-              <div className="flex items-center gap-2 p-3 rounded-lg bg-secondary/40">
-                <ShieldCheck className="h-4 w-4 text-primary-glow" />
-                14 gün iade
-              </div>
-            </div>
 
             <div className="flex gap-3 mt-auto pt-6">
               <Button variant="hero" size="lg" className="flex-1" onClick={handleBuy}>
