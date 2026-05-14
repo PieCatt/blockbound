@@ -7,6 +7,8 @@ export type ProductTag = {
   badgeClass: string;
   /** Tailwind classes added to the card root for a themed border + glow */
   cardClass: string;
+  /** HSL color for the animated gradient border */
+  borderColor: string;
 };
 
 export const PRODUCT_TAGS: ProductTag[] = [
@@ -15,28 +17,32 @@ export const PRODUCT_TAGS: ProductTag[] = [
     label: "Çok Satan",
     priority: 100,
     badgeClass: "bg-amber-500 text-amber-950 shadow-[0_0_20px_rgba(245,158,11,0.6)]",
-    cardClass: "ring-2 ring-amber-500/70 shadow-[0_0_30px_-5px_rgba(245,158,11,0.45)]",
+    cardClass: "tag-border shadow-[0_0_30px_-5px_rgba(245,158,11,0.45)]",
+    borderColor: "hsl(38 92% 55%)",
   },
   {
     value: "Yeni Çıkan",
     label: "Yeni Çıkan",
     priority: 90,
     badgeClass: "bg-emerald-500 text-emerald-950 shadow-[0_0_20px_rgba(16,185,129,0.6)]",
-    cardClass: "ring-2 ring-emerald-500/70 shadow-[0_0_30px_-5px_rgba(16,185,129,0.45)]",
+    cardClass: "tag-border shadow-[0_0_30px_-5px_rgba(16,185,129,0.45)]",
+    borderColor: "hsl(160 84% 45%)",
   },
   {
     value: "Sınırlı",
     label: "Sınırlı",
     priority: 80,
     badgeClass: "bg-purple-500 text-purple-50 shadow-[0_0_20px_rgba(168,85,247,0.6)]",
-    cardClass: "ring-2 ring-purple-500/70 shadow-[0_0_30px_-5px_rgba(168,85,247,0.45)]",
+    cardClass: "tag-border shadow-[0_0_30px_-5px_rgba(168,85,247,0.45)]",
+    borderColor: "hsl(271 91% 65%)",
   },
   {
     value: "İndirim",
     label: "İndirim",
     priority: 70,
     badgeClass: "bg-rose-500 text-rose-50 shadow-[0_0_20px_rgba(244,63,94,0.6)]",
-    cardClass: "ring-2 ring-rose-500/70 shadow-[0_0_30px_-5px_rgba(244,63,94,0.45)]",
+    cardClass: "tag-border shadow-[0_0_30px_-5px_rgba(244,63,94,0.45)]",
+    borderColor: "hsl(350 89% 60%)",
   },
 ];
 
