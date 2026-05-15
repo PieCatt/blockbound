@@ -141,11 +141,37 @@ const AdminProductForm = () => {
           </div>
           <div className="space-y-2">
             <Label>Kategori</Label>
-            <Input value={form.category} onChange={(e) => update("category", e.target.value)} />
+            <Input
+              value={form.category}
+              onChange={(e) => update("category", e.target.value)}
+              list="category-suggestions"
+              placeholder="Mevcut kategorilerden seç veya yeni yaz"
+            />
+            <datalist id="category-suggestions">
+              {categorySuggestions.map((c) => (
+                <option key={c} value={c} />
+              ))}
+            </datalist>
           </div>
           <div className="space-y-2">
             <Label>Fiyat (TL)</Label>
             <Input type="number" min={0} value={form.price} onChange={(e) => update("price", e.target.value)} disabled={form.is_free} />
+          </div>
+          <div className="space-y-2">
+            <Label>Eski fiyat (opsiyonel — indirim için)</Label>
+            <Input
+              type="number"
+              min={0}
+              value={form.original_price}
+              onChange={(e) => update("original_price", e.target.value)}
+              disabled={form.is_free}
+              placeholder="örn. 1200"
+            />
+            {form.original_price && form.price && Number(form.original_price) > Number(form.price) && (
+              <p className="text-xs text-rose-400 font-semibold">
+                İndirim: -%{Math.round((1 - Number(form.price) / Number(form.original_price)) * 100)}
+              </p>
+            )}
           </div>
           <div className="space-y-2">
             <Label>Etiket (opsiyonel)</Label>
