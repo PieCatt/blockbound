@@ -14,11 +14,13 @@ import { z } from "zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { PRODUCT_TAGS } from "@/lib/productTags";
 import { DEFAULT_PRODUCT_FEATURES, DEFAULT_PRODUCT_IMAGE } from "@/lib/productDefaults";
+import { useAllProducts } from "@/hooks/useContent";
 
 const schema = z.object({
   name: z.string().trim().min(2, "Ad çok kısa").max(150),
   category: z.string().trim().min(1).max(60),
   price: z.coerce.number().min(0),
+  original_price: z.union([z.coerce.number().min(0), z.literal("")]).optional(),
   badge: z.string().trim().max(40).optional().or(z.literal("")),
   img: z.string().trim().max(500),
   description: z.string().trim().max(2000),
@@ -33,11 +35,18 @@ const AdminProductForm = () => {
   const qc = useQueryClient();
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(!isNew);
+  const { data: allProducts = [] } = useAllProducts();
+  const categorySuggestions = useMemo(() => {
+    const set = new Set<string>();
+    allProducts.forEach((p) => p.category && set.add(p.category));
+    return Array.from(set).sort();
+  }, [allProducts]);
 
   const [form, setForm] = useState({
     name: "",
     category: "Koleksiyon",
     price: "0",
+    original_price: "",
     badge: "",
     img: "",
     description: "",
