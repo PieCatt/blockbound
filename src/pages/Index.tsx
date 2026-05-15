@@ -5,6 +5,7 @@ import Products from "@/components/Products";
 import FreeProducts from "@/components/FreeProducts";
 import Blog from "@/components/Blog";
 import Social from "@/components/Social";
+import Testimonials from "@/components/Testimonials";
 import Footer from "@/components/Footer";
 import LiveChat from "@/components/LiveChat";
 import CartSheet from "@/components/CartSheet";
@@ -34,6 +35,7 @@ const Index = () => {
           <Products />
           <FreeProducts />
           <Blog />
+          <Testimonials />
           <Social />
         </main>
         <Footer />
