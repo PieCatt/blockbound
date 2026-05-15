@@ -69,6 +69,7 @@ const AdminProductForm = () => {
         name: data.name,
         category: data.category,
         price: String(data.price),
+        original_price: (data as any).original_price != null ? String((data as any).original_price) : "",
         badge: data.badge ?? "",
         img: data.img,
         description: data.description,
@@ -93,10 +94,13 @@ const AdminProductForm = () => {
     setBusy(true);
     const cleanImages = images.map((s) => s.trim()).filter(Boolean);
     const cleanFeatures = features.map((s) => s.trim()).filter(Boolean);
+    const op = parsed.data.original_price;
+    const originalPrice = !parsed.data.is_free && typeof op === "number" && op > 0 ? op : null;
     const payload = {
       name: parsed.data.name,
       category: parsed.data.category,
       price: parsed.data.is_free ? 0 : parsed.data.price,
+      original_price: originalPrice,
       badge: parsed.data.badge || null,
       img: parsed.data.img.trim() || DEFAULT_PRODUCT_IMAGE,
       description: parsed.data.description,
