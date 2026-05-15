@@ -88,13 +88,16 @@
     background-image: linear-gradient(
       90deg,
       hsl(210 100% 60%),
-      hsl(195 100% 70%),
+      hsl(190 100% 65%),
+      hsl(175 90% 55%),
+      hsl(220 100% 65%),
       hsl(265 90% 70%),
-      hsl(210 100% 60%),
-      hsl(195 100% 70%),
-      hsl(265 90% 70%)
+      hsl(290 95% 70%),
+      hsl(230 100% 70%),
+      hsl(195 100% 65%),
+      hsl(210 100% 60%)
     );
-    background-size: 300% 100%;
+    background-size: 400% 100%;
     background-position: 0% 50%;
     -webkit-mask-image: var(--logo-src), linear-gradient(90deg, transparent 0%, transparent 28%, #000 33%, #000 100%), linear-gradient(180deg, #000 0%, #000 65%, transparent 70%);
             mask-image: var(--logo-src), linear-gradient(90deg, transparent 0%, transparent 28%, #000 33%, #000 100%), linear-gradient(180deg, #000 0%, #000 65%, transparent 70%);
@@ -176,22 +179,22 @@
   .tag-border::after {
     content: '';
     position: absolute;
-    inset: -3px;
+    inset: 0;
     border-radius: inherit;
-    padding: 3px;
+    padding: 2px;
     pointer-events: none;
     background: conic-gradient(
       from var(--tag-angle, 0deg),
       var(--tag-color, hsl(210 100% 60%)),
-      hsl(0 0% 100% / 0.85),
+      hsl(0 0% 100%),
       var(--tag-color, hsl(210 100% 60%)),
-      hsl(0 0% 0% / 0.4),
+      hsl(0 0% 100%),
       var(--tag-color, hsl(210 100% 60%))
     );
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
             mask-composite: exclude;
-    animation: tag-border-spin 6s linear infinite;
+    animation: tag-border-spin 4s linear infinite;
     opacity: 1;
     z-index: 2;
   }

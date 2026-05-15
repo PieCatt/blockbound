@@ -19,6 +19,7 @@ const mapProduct = (row: any): Product => ({
   name: row.name,
   category: row.category,
   price: Number(row.price),
+  original_price: row.original_price != null ? Number(row.original_price) : null,
   img: row.img,
   images: Array.isArray(row.images) ? row.images : [],
   badge: row.badge,
