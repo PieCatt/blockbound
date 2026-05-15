@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { ArrowUpRight, Calendar, Loader2 } from "lucide-react";
+import { ArrowUpRight, BookOpen, Calendar, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { usePosts, type Post } from "@/hooks/useContent";
+import { WIKI_URL } from "@/lib/links";
 import BlogPostDialog from "./BlogPostDialog";
 
 const Blog = () => {
@@ -10,9 +12,9 @@ const Blog = () => {
   const visible = posts.slice(0, 3);
 
   return (
-    <section id="blog" className="relative py-24 md:py-32">
+    <section id="blog" className="relative py-12 md:py-16">
       <div className="container">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
           <div className="max-w-2xl animate-fade-in-up">
             <div className="text-sm font-semibold uppercase tracking-widest text-primary-glow mb-4">
               // Blog
@@ -33,11 +35,13 @@ const Blog = () => {
           {visible.map((post, i) => (
             <article
               key={post.id}
-              onClick={() => setSelected(post)}
-              className="group glass-card glow-border rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 hover:-translate-y-2 animate-fade-in-up"
+              className="group glass-card glow-border rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 animate-fade-in-up flex flex-col"
               style={{ animationDelay: `${i * 100}ms` }}
             >
-              <div className={`relative aspect-[16/10] bg-gradient-to-br ${post.gradient} overflow-hidden`}>
+              <div
+                onClick={() => setSelected(post)}
+                className={`relative aspect-[16/10] bg-gradient-to-br ${post.gradient} overflow-hidden cursor-pointer`}
+              >
                 <div className="absolute inset-0 pixel-grid opacity-60" />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="w-24 h-24 bg-gradient-primary rounded-2xl shadow-glow animate-float opacity-90 group-hover:scale-110 transition-transform duration-500" />
@@ -47,18 +51,25 @@ const Blog = () => {
                 </span>
               </div>
 
-              <div className="p-6">
+              <div className="p-6 flex flex-col flex-1">
                 <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
                   <Calendar className="h-3 w-3" />
                   {post.date}
                 </div>
-                <h3 className="text-xl font-bold mb-3 group-hover:gradient-text transition-all">
+                <h3 className="text-xl font-bold mb-3 group-hover:gradient-text transition-all cursor-pointer" onClick={() => setSelected(post)}>
                   {post.title}
                 </h3>
                 <p className="text-muted-foreground text-sm mb-4 leading-relaxed">{post.excerpt}</p>
-                <div className="flex items-center gap-2 text-sm font-semibold text-primary-glow">
-                  Devamını oku
-                  <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                <div className="mt-auto flex flex-wrap items-center gap-2">
+                  <Button variant="hero" size="sm" onClick={() => setSelected(post)}>
+                    Devamını oku
+                    <ArrowUpRight className="ml-1 h-4 w-4" />
+                  </Button>
+                  <Button variant="outline" size="sm" asChild>
+                    <a href={WIKI_URL} target="_blank" rel="noopener noreferrer">
+                      <BookOpen className="mr-1 h-4 w-4" /> Wiki Sayfasını Görüntüle
+                    </a>
+                  </Button>
                 </div>
               </div>
             </article>
