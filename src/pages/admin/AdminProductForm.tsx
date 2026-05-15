@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -14,11 +14,13 @@ import { z } from "zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { PRODUCT_TAGS } from "@/lib/productTags";
 import { DEFAULT_PRODUCT_FEATURES, DEFAULT_PRODUCT_IMAGE } from "@/lib/productDefaults";
+import { useAllProducts } from "@/hooks/useContent";
 
 const schema = z.object({
   name: z.string().trim().min(2, "Ad çok kısa").max(150),
   category: z.string().trim().min(1).max(60),
   price: z.coerce.number().min(0),
+  original_price: z.union([z.coerce.number().min(0), z.literal("")]).optional(),
   badge: z.string().trim().max(40).optional().or(z.literal("")),
   img: z.string().trim().max(500),
   description: z.string().trim().max(2000),
@@ -33,11 +35,18 @@ const AdminProductForm = () => {
   const qc = useQueryClient();
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(!isNew);
+  const { data: allProducts = [] } = useAllProducts();
+  const categorySuggestions = useMemo(() => {
+    const set = new Set<string>();
+    allProducts.forEach((p) => p.category && set.add(p.category));
+    return Array.from(set).sort();
+  }, [allProducts]);
 
   const [form, setForm] = useState({
     name: "",
     category: "Koleksiyon",
     price: "0",
+    original_price: "",
     badge: "",
     img: "",
     description: "",
@@ -60,6 +69,7 @@ const AdminProductForm = () => {
         name: data.name,
         category: data.category,
         price: String(data.price),
+        original_price: (data as any).original_price != null ? String((data as any).original_price) : "",
         badge: data.badge ?? "",
         img: data.img,
         description: data.description,
@@ -84,10 +94,13 @@ const AdminProductForm = () => {
     setBusy(true);
     const cleanImages = images.map((s) => s.trim()).filter(Boolean);
     const cleanFeatures = features.map((s) => s.trim()).filter(Boolean);
+    const op = parsed.data.original_price;
+    const originalPrice = !parsed.data.is_free && typeof op === "number" && op > 0 ? op : null;
     const payload = {
       name: parsed.data.name,
       category: parsed.data.category,
       price: parsed.data.is_free ? 0 : parsed.data.price,
+      original_price: originalPrice,
       badge: parsed.data.badge || null,
       img: parsed.data.img.trim() || DEFAULT_PRODUCT_IMAGE,
       description: parsed.data.description,
@@ -128,11 +141,37 @@ const AdminProductForm = () => {
           </div>
           <div className="space-y-2">
             <Label>Kategori</Label>
-            <Input value={form.category} onChange={(e) => update("category", e.target.value)} />
+            <Input
+              value={form.category}
+              onChange={(e) => update("category", e.target.value)}
+              list="category-suggestions"
+              placeholder="Mevcut kategorilerden seç veya yeni yaz"
+            />
+            <datalist id="category-suggestions">
+              {categorySuggestions.map((c) => (
+                <option key={c} value={c} />
+              ))}
+            </datalist>
           </div>
           <div className="space-y-2">
             <Label>Fiyat (TL)</Label>
             <Input type="number" min={0} value={form.price} onChange={(e) => update("price", e.target.value)} disabled={form.is_free} />
+          </div>
+          <div className="space-y-2">
+            <Label>Eski fiyat (opsiyonel — indirim için)</Label>
+            <Input
+              type="number"
+              min={0}
+              value={form.original_price}
+              onChange={(e) => update("original_price", e.target.value)}
+              disabled={form.is_free}
+              placeholder="örn. 1200"
+            />
+            {form.original_price && form.price && Number(form.original_price) > Number(form.price) && (
+              <p className="text-xs text-rose-400 font-semibold">
+                İndirim: -%{Math.round((1 - Number(form.price) / Number(form.original_price)) * 100)}
+              </p>
+            )}
           </div>
           <div className="space-y-2">
             <Label>Etiket (opsiyonel)</Label>

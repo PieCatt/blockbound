@@ -8,6 +8,8 @@ import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ProductsPage from "./pages/ProductsPage.tsx";
 import BlogPage from "./pages/BlogPage.tsx";
+import HexEditorPage from "./pages/HexEditorPage.tsx";
+import MotdGeneratorPage from "./pages/MotdGeneratorPage.tsx";
 import AdminLogin from "./pages/admin/AdminLogin.tsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
 import AdminPostsList from "./pages/admin/AdminPostsList.tsx";
@@ -28,6 +30,8 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/blog" element={<BlogPage />} />
+            <Route path="/hex-editor" element={<HexEditorPage />} />
+            <Route path="/motd-generator" element={<MotdGeneratorPage />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/posts" element={<AdminPostsList />} />

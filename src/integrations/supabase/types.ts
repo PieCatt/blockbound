@@ -69,6 +69,7 @@ export type Database = {
           img: string
           is_free: boolean
           name: string
+          original_price: number | null
           price: number
           updated_at: string
         }
@@ -84,6 +85,7 @@ export type Database = {
           img?: string
           is_free?: boolean
           name: string
+          original_price?: number | null
           price?: number
           updated_at?: string
         }
@@ -99,6 +101,7 @@ export type Database = {
           img?: string
           is_free?: boolean
           name?: string
+          original_price?: number | null
           price?: number
           updated_at?: string
         }

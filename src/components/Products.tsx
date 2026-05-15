@@ -16,7 +16,7 @@ const Products = () => {
   const visible = showAll ? sorted : sorted.slice(0, 6);
 
   return (
-    <section id="products" className="relative py-24 md:py-32">
+    <section id="products" className="relative py-12 md:py-16">
       <div className="container">
         <div className="max-w-2xl mb-16 animate-fade-in-up">
           <div className="text-sm font-semibold uppercase tracking-widest text-primary-glow mb-4">
@@ -35,7 +35,10 @@ const Products = () => {
         ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {visible.map((p, i) => {
-            const tag = getTag(p.badge);
+            const hasDiscount = p.original_price != null && p.original_price > p.price;
+            const discountPct = hasDiscount ? Math.round((1 - p.price / (p.original_price as number)) * 100) : 0;
+            const effectiveBadge = p.badge || (hasDiscount ? "İndirim" : null);
+            const tag = getTag(effectiveBadge);
             return (
             <article
               key={p.id}
@@ -50,11 +53,18 @@ const Products = () => {
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-80" />
-                {p.badge && (
-                  <span className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold ${tag?.badgeClass ?? "bg-gradient-primary text-primary-foreground shadow-glow"}`}>
-                    {p.badge}
-                  </span>
-                )}
+                <div className="absolute top-4 left-4 flex flex-col gap-2 items-start">
+                  {effectiveBadge && (
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${tag?.badgeClass ?? "bg-gradient-primary text-primary-foreground shadow-glow"}`}>
+                      {effectiveBadge}
+                    </span>
+                  )}
+                  {hasDiscount && (
+                    <span className="px-2 py-0.5 rounded-md text-xs font-black bg-rose-500 text-rose-50 shadow-[0_0_15px_rgba(244,63,94,0.6)]">
+                      -%{discountPct}
+                    </span>
+                  )}
+                </div>
                 <div className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <Button variant="hero" size="sm" onClick={() => addToCart(p)}>
                     <ShoppingCart className="mr-2 h-4 w-4" /> Sepete Ekle
@@ -72,8 +82,13 @@ const Products = () => {
                 <h3 className="text-xl font-bold mb-3 group-hover:gradient-text transition-all">
                   {p.name}
                 </h3>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-black gradient-text">{formatPrice(p.price)}</span>
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-baseline gap-2 flex-wrap">
+                    <span className="text-2xl font-black gradient-text">{formatPrice(p.price)}</span>
+                    {hasDiscount && (
+                      <span className="text-sm text-muted-foreground line-through">{formatPrice(p.original_price as number)}</span>
+                    )}
+                  </div>
                   <span className="text-xs text-muted-foreground">Stokta</span>
                 </div>
               </div>

@@ -9,7 +9,7 @@ const stats = [
 
 const About = () => {
   return (
-    <section id="about" className="relative py-24 md:py-32">
+    <section id="about" className="relative py-12 md:py-16">
       <div className="container">
         <div className="grid lg:grid-cols-2 gap-14 items-center">
           <div className="animate-fade-in-up">

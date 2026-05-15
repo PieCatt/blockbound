@@ -9,7 +9,7 @@ const socials = [
 
 const Social = () => {
   return (
-    <section id="social" className="relative py-24 md:py-32">
+    <section id="social" className="relative py-12 md:py-16">
       <div className="container">
         <div className="max-w-2xl mb-16 animate-fade-in-up">
           <div className="text-sm font-semibold uppercase tracking-widest text-primary-glow mb-4">
