@@ -10,6 +10,8 @@ type Props = {
   onClose: () => void;
 };
 
+const DESC_LIMIT = 220;
+
 const ProductDialog = ({ product, onClose }: Props) => {
   const { addToCart, setCartOpen } = useCart();
 
@@ -21,7 +23,8 @@ const ProductDialog = ({ product, onClose }: Props) => {
   }, [product]);
 
   const [active, setActive] = useState(0);
-  useEffect(() => setActive(0), [product?.id]);
+  const [expanded, setExpanded] = useState(false);
+  useEffect(() => { setActive(0); setExpanded(false); }, [product?.id]);
 
   if (!product) return null;
 
@@ -29,8 +32,24 @@ const ProductDialog = ({ product, onClose }: Props) => {
     ? product.features
     : DEFAULT_PRODUCT_FEATURES;
 
+  const hasDiscount = product.original_price != null && product.original_price > product.price;
+  const discountPct = hasDiscount ? Math.round((1 - product.price / (product.original_price as number)) * 100) : 0;
+  const longDesc = (product.description?.length ?? 0) > DESC_LIMIT;
+  const shownDesc = !longDesc || expanded ? product.description : `${product.description.slice(0, DESC_LIMIT).trimEnd()}…`;
+
   const handleAdd = () => addToCart(product);
   const handleBuy = () => { addToCart(product); onClose(); setCartOpen(true); };
+
+  const FeaturesList = () => (
+    <ul className="space-y-2 text-sm">
+      {features.map((f) => (
+        <li key={f} className="flex items-center gap-2 text-muted-foreground">
+          <Check className="h-4 w-4 text-primary-glow" />
+          {f}
+        </li>
+      ))}
+    </ul>
+  );
 
   return (
     <Dialog open={!!product} onOpenChange={(o) => !o && onClose()}>
@@ -48,6 +67,11 @@ const ProductDialog = ({ product, onClose }: Props) => {
               {product.badge && (
                 <span className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold bg-gradient-primary text-primary-foreground shadow-glow">
                   {product.badge}
+                </span>
+              )}
+              {hasDiscount && (
+                <span className="absolute top-4 right-4 px-2 py-1 rounded-md text-xs font-black bg-rose-500 text-rose-50 shadow-[0_0_15px_rgba(244,63,94,0.6)]">
+                  -%{discountPct}
                 </span>
               )}
             </div>
@@ -68,28 +92,23 @@ const ProductDialog = ({ product, onClose }: Props) => {
             )}
           </div>
 
-          <div className="p-8 flex flex-col">
+          <div className="p-6 md:p-8 flex flex-col">
             <DialogHeader className="text-left space-y-2">
               <div className="text-xs font-semibold uppercase tracking-wider text-primary-glow">
                 {product.category}
               </div>
-              <DialogTitle className="text-3xl font-black">{product.name}</DialogTitle>
+              <DialogTitle className="text-2xl md:text-3xl font-black">{product.name}</DialogTitle>
             </DialogHeader>
 
-            <div className="text-4xl font-black gradient-text mt-4">{formatPrice(product.price)}</div>
+            <div className="mt-3 flex items-baseline gap-3 flex-wrap">
+              <span className="text-3xl md:text-4xl font-black gradient-text">{formatPrice(product.price)}</span>
+              {hasDiscount && (
+                <span className="text-base text-muted-foreground line-through">{formatPrice(product.original_price as number)}</span>
+              )}
+            </div>
 
-            <p className="text-muted-foreground mt-5 leading-relaxed">{product.description}</p>
-
-            <ul className="mt-6 space-y-2 text-sm">
-              {features.map((f) => (
-                <li key={f} className="flex items-center gap-2 text-muted-foreground">
-                  <Check className="h-4 w-4 text-primary-glow" />
-                  {f}
-                </li>
-              ))}
-            </ul>
-
-            <div className="flex gap-3 mt-auto pt-6">
+            {/* CTA — her zaman üstte ve scroll yapmadan görünür */}
+            <div className="flex gap-3 mt-4">
               <Button variant="hero" size="lg" className="flex-1" onClick={handleBuy}>
                 Hemen Al
               </Button>
@@ -97,6 +116,32 @@ const ProductDialog = ({ product, onClose }: Props) => {
                 <ShoppingCart className="mr-2 h-4 w-4" /> Sepete Ekle
               </Button>
             </div>
+
+            {/* Collapsed: features üstte, açıklama altta. Expanded: açıklama tam, features altta. */}
+            {!expanded && (
+              <div className="mt-5">
+                <FeaturesList />
+              </div>
+            )}
+
+            <p className="text-muted-foreground mt-5 leading-relaxed">
+              {shownDesc}
+              {longDesc && (
+                <button
+                  type="button"
+                  onClick={() => setExpanded((v) => !v)}
+                  className="ml-1 text-primary-glow font-semibold hover:underline"
+                >
+                  {expanded ? "Daha az oku" : "Devamını oku"}
+                </button>
+              )}
+            </p>
+
+            {expanded && (
+              <div className="mt-5">
+                <FeaturesList />
+              </div>
+            )}
           </div>
         </div>
       </DialogContent>
