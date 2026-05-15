@@ -49,8 +49,14 @@ export const PRODUCT_TAGS: ProductTag[] = [
 export const getTag = (badge?: string | null): ProductTag | undefined =>
   badge ? PRODUCT_TAGS.find((t) => t.value === badge) : undefined;
 
-export const tagPriority = (badge?: string | null): number =>
-  getTag(badge)?.priority ?? 0;
+export const effectiveBadge = (item: { badge?: string | null; original_price?: number | null; price?: number }): string | null => {
+  if (item.badge) return item.badge;
+  if (item.original_price != null && item.price != null && item.original_price > item.price) return "İndirim";
+  return null;
+};
 
-export const sortByTagPriority = <T extends { badge?: string | null }>(items: T[]): T[] =>
-  [...items].sort((a, b) => tagPriority(b.badge) - tagPriority(a.badge));
+export const tagPriority = (item: { badge?: string | null; original_price?: number | null; price?: number }): number =>
+  getTag(effectiveBadge(item))?.priority ?? 0;
+
+export const sortByTagPriority = <T extends { badge?: string | null; original_price?: number | null; price?: number }>(items: T[]): T[] =>
+  [...items].sort((a, b) => tagPriority(b) - tagPriority(a));
