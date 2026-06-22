@@ -10,6 +10,7 @@ import ProductsPage from "./pages/ProductsPage.tsx";
 import BlogPage from "./pages/BlogPage.tsx";
 import HexEditorPage from "./pages/HexEditorPage.tsx";
 import MotdGeneratorPage from "./pages/MotdGeneratorPage.tsx";
+import CraftingHelperPage from "./pages/CraftingHelperPage.tsx";
 import AdminLogin from "./pages/admin/AdminLogin.tsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
 import AdminPostsList from "./pages/admin/AdminPostsList.tsx";
