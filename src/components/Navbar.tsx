@@ -18,9 +18,9 @@ const links = [
 ];
 
 const tools = [
-  { href: "#crafting-helper", label: "Crafting Yardımcısı", icon: Hammer, desc: "Tarif ve malzeme hesaplayıcı" },
-  { href: "#hex-editor", label: "Hex Editör", icon: Hash, desc: "Renk kodlarını kolayca düzenle" },
-  { href: "#motd-maker", label: "MOTD Maker", icon: MessageSquare, desc: "Sunucu mesajını tasarla" },
+  { href: "/crafting-helper", label: "Crafting Yardımcısı", icon: Hammer, desc: "Tarif ve malzeme hesaplayıcı" },
+  { href: "/hex-editor", label: "Hex Editör", icon: Hash, desc: "Renk kodlarını kolayca düzenle" },
+  { href: "/motd-generator", label: "MOTD Maker", icon: MessageSquare, desc: "Sunucu mesajını tasarla" },
 ];
 
 const Navbar = () => {

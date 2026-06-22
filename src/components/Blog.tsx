@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { ArrowUpRight, BookOpen, Calendar, Loader2 } from "lucide-react";
+import { ArrowUpRight, Calendar, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePosts, type Post } from "@/hooks/useContent";
-import { WIKI_URL } from "@/lib/links";
 import BlogPostDialog from "./BlogPostDialog";
 
 const Blog = () => {
@@ -64,11 +63,6 @@ const Blog = () => {
                   <Button variant="hero" size="sm" onClick={() => setSelected(post)}>
                     Devamını oku
                     <ArrowUpRight className="ml-1 h-4 w-4" />
-                  </Button>
-                  <Button variant="outline" size="sm" asChild>
-                    <a href={WIKI_URL} target="_blank" rel="noopener noreferrer">
-                      <BookOpen className="mr-1 h-4 w-4" /> Wiki Sayfasını Görüntüle
-                    </a>
                   </Button>
                 </div>
               </div>

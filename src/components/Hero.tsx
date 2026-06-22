@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpen, Sparkles } from "lucide-react";
 import heroBg from "@/assets/hero-bg.jpg";
+import { WIKI_URL } from "@/lib/links";
 
 const Hero = () => {
   return (
@@ -50,6 +51,11 @@ const Hero = () => {
             </Button>
             <Button variant="outline" size="xl" asChild>
               <a href="#blog">Blog'u Oku</a>
+            </Button>
+            <Button variant="outline" size="xl" asChild>
+              <a href={WIKI_URL} target="_blank" rel="noopener noreferrer">
+                <BookOpen className="mr-2 h-5 w-5" /> Wiki
+              </a>
             </Button>
           </div>
 
