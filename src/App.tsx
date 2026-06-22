@@ -33,6 +33,7 @@ const App = () => (
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/hex-editor" element={<HexEditorPage />} />
             <Route path="/motd-generator" element={<MotdGeneratorPage />} />
+            <Route path="/crafting-helper" element={<CraftingHelperPage />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/posts" element={<AdminPostsList />} />
