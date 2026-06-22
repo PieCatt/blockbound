@@ -64,11 +64,6 @@ const Blog = () => {
                     Devamını oku
                     <ArrowUpRight className="ml-1 h-4 w-4" />
                   </Button>
-                  <Button variant="outline" size="sm" asChild>
-                    <a href={WIKI_URL} target="_blank" rel="noopener noreferrer">
-                      <BookOpen className="mr-1 h-4 w-4" /> Wiki Sayfasını Görüntüle
-                    </a>
-                  </Button>
                 </div>
               </div>
             </article>
