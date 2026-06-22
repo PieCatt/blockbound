@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { ArrowUpRight, BookOpen, Calendar, Loader2 } from "lucide-react";
+import { ArrowUpRight, Calendar, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePosts, type Post } from "@/hooks/useContent";
-import { WIKI_URL } from "@/lib/links";
 import BlogPostDialog from "./BlogPostDialog";
 
 const Blog = () => {
