@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpen, Sparkles } from "lucide-react";
 import heroBg from "@/assets/hero-bg.jpg";
+import { WIKI_URL } from "@/lib/links";
 
 const Hero = () => {
   return (
