@@ -92,7 +92,7 @@ const ProductDialog = ({ product, onClose }: Props) => {
             )}
           </div>
 
-          <div className="p-6 md:p-8 flex flex-col">
+          <div className="relative p-6 md:p-8 pb-28 flex flex-col">
             <DialogHeader className="text-left space-y-2">
               <div className="text-xs font-semibold uppercase tracking-wider text-primary-glow">
                 {product.category}
@@ -105,16 +105,6 @@ const ProductDialog = ({ product, onClose }: Props) => {
               {hasDiscount && (
                 <span className="text-base text-muted-foreground line-through">{formatPrice(product.original_price as number)}</span>
               )}
-            </div>
-
-            {/* CTA — her zaman üstte ve scroll yapmadan görünür */}
-            <div className="flex gap-3 mt-4">
-              <Button variant="hero" size="lg" className="flex-1" onClick={handleBuy}>
-                Hemen Al
-              </Button>
-              <Button variant="outline" size="lg" onClick={handleAdd}>
-                <ShoppingCart className="mr-2 h-4 w-4" /> Sepete Ekle
-              </Button>
             </div>
 
             {/* Collapsed: features üstte, açıklama altta. Expanded: açıklama tam, features altta. */}
@@ -142,6 +132,18 @@ const ProductDialog = ({ product, onClose }: Props) => {
                 <FeaturesList />
               </div>
             )}
+
+            {/* CTA — sağ altta sticky */}
+            <div className="sticky bottom-0 left-0 right-0 mt-6 -mx-6 md:-mx-8 px-6 md:px-8 py-4 bg-gradient-to-t from-background via-background/95 to-transparent">
+              <div className="flex gap-3 justify-end">
+                <Button variant="outline" size="lg" onClick={handleAdd}>
+                  <ShoppingCart className="mr-2 h-4 w-4" /> Sepete Ekle
+                </Button>
+                <Button variant="hero" size="lg" onClick={handleBuy}>
+                  Hemen Al
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </DialogContent>
