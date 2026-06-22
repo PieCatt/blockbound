@@ -52,6 +52,11 @@ const Hero = () => {
             <Button variant="outline" size="xl" asChild>
               <a href="#blog">Blog'u Oku</a>
             </Button>
+            <Button variant="outline" size="xl" asChild>
+              <a href={WIKI_URL} target="_blank" rel="noopener noreferrer">
+                <BookOpen className="mr-2 h-5 w-5" /> Wiki
+              </a>
+            </Button>
           </div>
 
           <div className="mt-16 flex flex-wrap gap-8 md:gap-12">
