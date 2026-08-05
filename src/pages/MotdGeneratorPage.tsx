@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import "@south-paw/typeface-minecraft/index.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CartSheet from "@/components/CartSheet";
@@ -6,7 +7,21 @@ import { CartProvider } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Copy, Bold, Italic, Underline, Strikethrough, Sparkles } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import {
+  Copy,
+  Bold,
+  Italic,
+  Underline,
+  Strikethrough,
+  Sparkles,
+  RotateCcw,
+  Eraser,
+  Wand2,
+  Users,
+  Signal,
+} from "lucide-react";
 import { toast } from "sonner";
 
 const COLORS: { code: string; name: string; hex: string }[] = [
@@ -29,18 +44,50 @@ const COLORS: { code: string; name: string; hex: string }[] = [
 ];
 
 const FORMATS = [
-  { code: "l", icon: Bold, label: "Bold" },
-  { code: "o", icon: Italic, label: "Italic" },
-  { code: "n", icon: Underline, label: "Underline" },
-  { code: "m", icon: Strikethrough, label: "Strike" },
-  { code: "k", icon: Sparkles, label: "Obfuscated" },
+  { code: "l", icon: Bold, label: "Kalın (§l)" },
+  { code: "o", icon: Italic, label: "İtalik (§o)" },
+  { code: "n", icon: Underline, label: "Altı Çizili (§n)" },
+  { code: "m", icon: Strikethrough, label: "Üstü Çizili (§m)" },
+  { code: "k", icon: Sparkles, label: "Karışık / Obfuscated (§k)" },
 ];
+
+const PRESETS: { name: string; value: string }[] = [
+  {
+    name: "Klasik",
+    value: "§6§lBLOCKBOUND §8» §fPremium Minecraft Sunucusu\n§7Sürüm §a1.21 §7• §bshop.blockbound.gg",
+  },
+  {
+    name: "Etkinlik",
+    value: "§c§l✦ YAZ ETKİNLİĞİ BAŞLADI ✦\n§e%50 indirim §7ve §dözel kozmetikler §7seni bekliyor!",
+  },
+  {
+    name: "Bakım",
+    value: "§4§lBAKIM MODU\n§7Kısa süre içinde geri döneceğiz §8| §7takipte kal",
+  },
+  {
+    name: "Renkli",
+    value: "§bB§3l§9o§1c§5k§db§5o§9u§3n§bd §8• §aSurvival §7| §eSkyblock §7| §cPvP\n§7Hemen katıl: §fplay.blockbound.gg",
+  },
+];
+
+const OBF_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#@%&$?!/\\|";
 
 const colorFor = (code: string) => COLORS.find((c) => c.code === code)?.hex;
 
-// Render text with §-codes into styled spans for the preview.
-const renderMotd = (text: string) => {
-  const tokens: { color?: string; styles: string[]; text: string }[] = [];
+const shadowFor = (hex: string) => {
+  const n = hex.replace("#", "");
+  const num = parseInt(n, 16);
+  const r = Math.floor(((num >> 16) & 255) * 0.25);
+  const g = Math.floor(((num >> 8) & 255) * 0.25);
+  const b = Math.floor((num & 255) * 0.25);
+  return `#${[r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("")}`;
+};
+
+type Token = { color?: string; styles: string[]; text: string; br?: boolean };
+
+// Render text with §-codes into styled tokens for the preview.
+const tokenize = (text: string): Token[] => {
+  const tokens: Token[] = [];
   let color: string | undefined;
   let styles: string[] = [];
   let buf = "";
@@ -50,8 +97,13 @@ const renderMotd = (text: string) => {
   };
   for (let i = 0; i < text.length; i++) {
     const ch = text[i];
-    if (ch === "§" && i + 1 < text.length) {
+    if ((ch === "§" || ch === "&") && i + 1 < text.length) {
       const code = text[i + 1].toLowerCase();
+      const valid = code === "r" || !!colorFor(code) || ["l", "o", "n", "m", "k"].includes(code);
+      if (!valid) {
+        buf += ch;
+        continue;
+      }
       flush();
       if (code === "r") {
         color = undefined;
@@ -59,13 +111,13 @@ const renderMotd = (text: string) => {
       } else if (colorFor(code)) {
         color = colorFor(code);
         styles = [];
-      } else if (["l", "o", "n", "m", "k"].includes(code)) {
+      } else {
         if (!styles.includes(code)) styles.push(code);
       }
       i++;
     } else if (ch === "\n") {
       flush();
-      tokens.push({ text: "\n", styles: [] });
+      tokens.push({ text: "", styles: [], br: true });
     } else {
       buf += ch;
     }
@@ -74,107 +126,381 @@ const renderMotd = (text: string) => {
   return tokens;
 };
 
+const stripCodes = (s: string) => s.replace(/[§&][0-9a-fk-orA-FK-OR]/g, "");
+
+const MotdLine = ({ tokens, tick }: { tokens: Token[]; tick: number }) => (
+  <>
+    {tokens.map((t, i) => {
+      const color = t.color ?? "#AAAAAA";
+      const obf = t.styles.includes("k");
+      const shown = obf
+        ? t.text
+            .split("")
+            .map((c) =>
+              c === " " ? " " : OBF_CHARS[Math.floor((tick * 7 + i * 13 + c.charCodeAt(0)) % OBF_CHARS.length)]
+            )
+            .join("")
+        : t.text;
+      return (
+        <span
+          key={i}
+          style={{
+            color,
+            textShadow: `2px 2px 0 ${shadowFor(color)}`,
+            fontWeight: t.styles.includes("l") ? 700 : 400,
+            fontStyle: t.styles.includes("o") ? "italic" : "normal",
+            textDecoration: [
+              t.styles.includes("n") ? "underline" : "",
+              t.styles.includes("m") ? "line-through" : "",
+            ]
+              .filter(Boolean)
+              .join(" "),
+          }}
+        >
+          {shown}
+        </span>
+      );
+    })}
+  </>
+);
+
 const MotdGeneratorPage = () => {
-  const [text, setText] = useState("§6Welcome to §bBlockbound§r\n§aA premium Minecraft server");
+  const [text, setText] = useState(PRESETS[0].value);
+  const [serverName, setServerName] = useState("Blockbound Network");
+  const [online, setOnline] = useState(842);
+  const [maxPlayers, setMaxPlayers] = useState(1000);
+  const [darkList, setDarkList] = useState(true);
+  const [tick, setTick] = useState(0);
+  const areaRef = useRef<HTMLTextAreaElement>(null);
+  const historyRef = useRef<string[]>([]);
 
   useEffect(() => {
-    document.title = "MOTD Generator — Blockbound Studios";
+    document.title = "MOTD Generator — Minecraft Sunucu Mesajı Tasarla | Blockbound";
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc)
+      desc.setAttribute(
+        "content",
+        "Minecraft sunucu MOTD'unu renk kodlarıyla tasarla, gerçek sunucu listesi görünümünde canlı önizle ve server.properties için tek tıkla kopyala."
+      );
   }, []);
 
-  const tokens = useMemo(() => renderMotd(text), [text]);
+  // animate obfuscated (§k) text
+  const hasObf = text.includes("§k") || text.includes("&k");
+  useEffect(() => {
+    if (!hasObf) return;
+    const id = window.setInterval(() => setTick((t) => t + 1), 70);
+    return () => window.clearInterval(id);
+  }, [hasObf]);
 
-  const insert = (code: string) => setText((t) => t + "§" + code);
+  const lines = useMemo(() => {
+    const raw = text.split("\n").slice(0, 2);
+    return raw.map((l) => tokenize(l));
+  }, [text]);
 
-  const copyServerProps = () => {
-    const out = text.replace(/\n/g, "\\n").replace(/§/g, "\\u00A7");
-    navigator.clipboard.writeText(`motd=${out}`);
-    toast.success("server.properties formatı kopyalandı");
+  const plainLines = useMemo(() => text.split("\n").slice(0, 2).map(stripCodes), [text]);
+
+  const push = useCallback((next: string) => {
+    historyRef.current = [...historyRef.current.slice(-40), text];
+    setText(next);
+  }, [text]);
+
+  // Insert a code at the caret position (or at the end).
+  const insert = (code: string) => {
+    const el = areaRef.current;
+    const snippet = "§" + code;
+    if (!el) {
+      push(text + snippet);
+      return;
+    }
+    const start = el.selectionStart ?? text.length;
+    const end = el.selectionEnd ?? start;
+    const next = text.slice(0, start) + snippet + text.slice(end);
+    push(next);
+    requestAnimationFrame(() => {
+      el.focus();
+      el.setSelectionRange(start + snippet.length, start + snippet.length);
+    });
   };
+
+  const undo = () => {
+    const prev = historyRef.current.pop();
+    if (prev === undefined) return toast.info("Geri alınacak bir şey yok");
+    setText(prev);
+  };
+
+  const rainbow = () => {
+    const order = ["c", "6", "e", "a", "b", "9", "d"];
+    const next = text
+      .split("\n")
+      .map((line) => {
+        const plain = stripCodes(line);
+        let i = 0;
+        return plain
+          .split("")
+          .map((ch) => (ch === " " ? ch : `§${order[i++ % order.length]}${ch}`))
+          .join("");
+      })
+      .join("\n");
+    push(next);
+    toast.success("Gökkuşağı uygulandı");
+  };
+
+  const copy = (value: string, label: string) => {
+    navigator.clipboard.writeText(value);
+    toast.success(`${label} kopyalandı`);
+  };
+
+  const serverProps = `motd=${text.replace(/\n/g, "\\n").replace(/&/g, "§").replace(/§/g, "\\u00A7")}`;
+  const jsonOut = JSON.stringify({ text: text.replace(/&/g, "§") });
+  const ampOut = text.replace(/§/g, "&");
 
   return (
     <CartProvider>
       <div className="min-h-screen bg-background">
         <Navbar />
-        <main className="container pt-32 pb-16 min-h-[60vh]">
-          <div className="text-sm font-semibold uppercase tracking-widest text-primary-glow mb-4">
+        <main className="container pt-28 pb-20">
+          <div className="text-sm font-semibold uppercase tracking-widest text-primary-glow mb-3">
             // Araçlar
           </div>
           <h1 className="text-4xl md:text-6xl font-black mb-3">
             MOTD <span className="gradient-text">Generator</span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mb-10">
-            Sunucu mesajını (MOTD) §-renk kodlarıyla tasarla, canlı önizle, server.properties için kopyala.
+            Sunucu mesajını renk ve biçim kodlarıyla tasarla, gerçek Minecraft sunucu listesi
+            görünümünde canlı önizle ve tek tıkla kopyala.
           </p>
 
-          <div className="grid lg:grid-cols-2 gap-8">
+          <div className="grid lg:grid-cols-[1fr_1.05fr] gap-8 items-start">
+            {/* ---- Editor ---- */}
             <div className="space-y-4">
-              <div className="glass-card rounded-2xl p-4 flex flex-wrap gap-2">
-                {COLORS.map((c) => (
-                  <button
-                    key={c.code}
-                    onClick={() => insert(c.code)}
-                    title={`§${c.code} ${c.name}`}
-                    className="h-9 w-9 rounded-md border border-border/60 hover:scale-110 transition-transform"
-                    style={{ background: c.hex }}
-                    aria-label={c.name}
-                  />
-                ))}
-                <div className="w-full h-px bg-border/50 my-1" />
-                {FORMATS.map((f) => (
-                  <Button key={f.code} variant="outline" size="sm" onClick={() => insert(f.code)} title={f.label}>
-                    <f.icon className="h-4 w-4" />
+              <div className="glass-card rounded-2xl p-5 space-y-4">
+                <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                  Renkler
+                </div>
+                <div className="grid grid-cols-8 gap-2">
+                  {COLORS.map((c) => (
+                    <button
+                      key={c.code}
+                      onClick={() => insert(c.code)}
+                      title={`§${c.code} — ${c.name}`}
+                      className="group relative h-10 rounded-lg border border-border/60 transition-all hover:scale-110 hover:z-10 hover:shadow-glow"
+                      style={{ background: c.hex }}
+                      aria-label={c.name}
+                    >
+                      <span className="absolute inset-x-0 -bottom-5 text-[10px] font-mono text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
+                        §{c.code}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="h-px bg-border/60" />
+
+                <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                  Biçim
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {FORMATS.map((f) => (
+                    <Button
+                      key={f.code}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => insert(f.code)}
+                      title={f.label}
+                    >
+                      <f.icon className="h-4 w-4" />
+                    </Button>
+                  ))}
+                  <Button variant="outline" size="sm" onClick={() => insert("r")}>
+                    Sıfırla §r
                   </Button>
-                ))}
-                <Button variant="outline" size="sm" onClick={() => insert("r")}>Reset §r</Button>
+                  <Button variant="outline" size="sm" onClick={rainbow}>
+                    <Wand2 className="mr-2 h-4 w-4" /> Gökkuşağı
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={undo}>
+                    <RotateCcw className="mr-2 h-4 w-4" /> Geri Al
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => push("")}>
+                    <Eraser className="mr-2 h-4 w-4" /> Temizle
+                  </Button>
+                </div>
               </div>
 
-              <Textarea
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                rows={6}
-                className="font-mono"
-                placeholder="§6Welcome to §bMyServer..."
-              />
+              <div className="glass-card rounded-2xl p-5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="motd-text" className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                    MOTD Metni (en fazla 2 satır)
+                  </Label>
+                  <div className="flex gap-3 text-xs font-mono">
+                    {plainLines.map((l, i) => (
+                      <span key={i} className={l.length > 45 ? "text-destructive" : "text-muted-foreground"}>
+                        S{i + 1}: {l.length}/45
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <Textarea
+                  id="motd-text"
+                  ref={areaRef}
+                  value={text}
+                  onChange={(e) => setText(e.target.value.split("\n").slice(0, 2).join("\n"))}
+                  rows={4}
+                  className="font-mono text-sm leading-relaxed"
+                  placeholder="§6Welcome to §bMyServer..."
+                />
+                <p className="text-xs text-muted-foreground">
+                  İpucu: <span className="font-mono text-foreground">&amp;</span> kodları da destekleniyor.
+                  Renk kodu yazınca aktif biçimler sıfırlanır — Minecraft'ta da böyle çalışır.
+                </p>
+              </div>
 
-              <div className="flex gap-2">
-                <Button variant="hero" onClick={copyServerProps}>
-                  <Copy className="mr-2 h-4 w-4" /> server.properties Kopyala
-                </Button>
-                <Button variant="outline" onClick={() => { navigator.clipboard.writeText(text); toast.success("Ham metin kopyalandı"); }}>
-                  Ham Metin
-                </Button>
+              <div className="glass-card rounded-2xl p-5 space-y-3">
+                <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                  Hazır Şablonlar
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {PRESETS.map((p) => (
+                    <Button key={p.name} variant="secondary" size="sm" onClick={() => push(p.value)}>
+                      {p.name}
+                    </Button>
+                  ))}
+                </div>
               </div>
             </div>
 
-            <div className="glass-card rounded-2xl p-6">
-              <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">
-                Canlı Önizleme
-              </div>
-              <div
-                className="rounded-xl p-6 bg-black font-mono text-lg leading-relaxed min-h-[200px]"
-                style={{ fontFamily: "'Minecraftia', monospace" }}
-              >
-                {tokens.map((t, i) =>
-                  t.text === "\n" ? (
-                    <br key={i} />
-                  ) : (
-                    <span
-                      key={i}
+            {/* ---- Preview + export ---- */}
+            <div className="space-y-4 lg:sticky lg:top-24">
+              <div className="glass-card rounded-2xl p-5 space-y-4">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                    Canlı Önizleme — Sunucu Listesi
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="bg-toggle" className="text-xs text-muted-foreground">
+                      Koyu arka plan
+                    </Label>
+                    <Switch id="bg-toggle" checked={darkList} onCheckedChange={setDarkList} />
+                  </div>
+                </div>
+
+                <div
+                  className="rounded-xl p-4 sm:p-6"
+                  style={{
+                    background: darkList
+                      ? "linear-gradient(180deg,#101010,#1b1b1b)"
+                      : "linear-gradient(180deg,#6a8ec4,#8fb0d8)",
+                  }}
+                >
+                  <div
+                    className="flex gap-3 p-2 sm:p-3 border-2"
+                    style={{
+                      background: "rgba(0,0,0,0.55)",
+                      borderColor: "#6b6b6b",
+                      fontFamily: "'Minecraft', 'Courier New', monospace",
+                      imageRendering: "pixelated",
+                    }}
+                  >
+                    <div
+                      className="h-16 w-16 shrink-0 grid place-items-center text-2xl"
                       style={{
-                        color: t.color ?? "#FFFFFF",
-                        fontWeight: t.styles.includes("l") ? 700 : 400,
-                        fontStyle: t.styles.includes("o") ? "italic" : "normal",
-                        textDecoration: [
-                          t.styles.includes("n") ? "underline" : "",
-                          t.styles.includes("m") ? "line-through" : "",
-                        ].filter(Boolean).join(" "),
-                        filter: t.styles.includes("k") ? "blur(2px)" : "none",
+                        background: "linear-gradient(135deg,#3aa0ff,#8b5cf6)",
+                        color: "#fff",
+                        textShadow: "2px 2px 0 rgba(0,0,0,0.5)",
                       }}
                     >
-                      {t.text}
-                    </span>
-                  )
-                )}
+                      B
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-start justify-between gap-3">
+                        <div
+                          className="truncate text-base sm:text-lg"
+                          style={{ color: "#FFFFFF", textShadow: "2px 2px 0 #3f3f3f" }}
+                        >
+                          {serverName || "Minecraft Server"}
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0" style={{ color: "#AAAAAA" }}>
+                          <span className="text-xs" style={{ textShadow: "2px 2px 0 #2a2a2a" }}>
+                            {online}/{maxPlayers}
+                          </span>
+                          <div className="flex items-end gap-[2px] h-4">
+                            {[6, 9, 12, 15, 18].map((h, i) => (
+                              <span
+                                key={i}
+                                style={{
+                                  display: "block",
+                                  width: 3,
+                                  height: h,
+                                  background: i < 4 ? "#55FF55" : "#3f3f3f",
+                                }}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-1 text-sm sm:text-base leading-snug break-words">
+                        {lines.map((lineTokens, i) => (
+                          <div key={i} className="min-h-[1.2em]">
+                            <MotdLine tokens={lineTokens} tick={tick} />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid sm:grid-cols-3 gap-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="srv" className="text-xs text-muted-foreground">
+                      Sunucu adı
+                    </Label>
+                    <Input id="srv" value={serverName} onChange={(e) => setServerName(e.target.value)} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="on" className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Users className="h-3 w-3" /> Çevrimiçi
+                    </Label>
+                    <Input
+                      id="on"
+                      type="number"
+                      value={online}
+                      onChange={(e) => setOnline(Number(e.target.value))}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="max" className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Signal className="h-3 w-3" /> Kapasite
+                    </Label>
+                    <Input
+                      id="max"
+                      type="number"
+                      value={maxPlayers}
+                      onChange={(e) => setMaxPlayers(Number(e.target.value))}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="glass-card rounded-2xl p-5 space-y-3">
+                <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                  Dışa Aktar
+                </div>
+                <div className="rounded-lg bg-secondary/60 p-3 font-mono text-xs break-all text-muted-foreground">
+                  {serverProps}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button variant="hero" onClick={() => copy(serverProps, "server.properties")}>
+                    <Copy className="mr-2 h-4 w-4" /> server.properties
+                  </Button>
+                  <Button variant="outline" onClick={() => copy(text, "Ham metin (§)")}>
+                    Ham (§)
+                  </Button>
+                  <Button variant="outline" onClick={() => copy(ampOut, "& kodlu metin")}>
+                    &amp; kodlu
+                  </Button>
+                  <Button variant="outline" onClick={() => copy(jsonOut, "JSON")}>
+                    JSON
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
