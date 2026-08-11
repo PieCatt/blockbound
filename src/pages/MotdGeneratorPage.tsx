@@ -44,33 +44,34 @@ const COLORS: { code: string; name: string; hex: string }[] = [
 ];
 
 const FORMATS = [
-  { code: "l", icon: Bold, label: "Kalın (§l)" },
-  { code: "o", icon: Italic, label: "İtalik (§o)" },
-  { code: "n", icon: Underline, label: "Altı Çizili (§n)" },
-  { code: "m", icon: Strikethrough, label: "Üstü Çizili (§m)" },
-  { code: "k", icon: Sparkles, label: "Karışık / Obfuscated (§k)" },
+  { code: "l", icon: Bold, label: "Kalın (&l)" },
+  { code: "o", icon: Italic, label: "İtalik (&o)" },
+  { code: "n", icon: Underline, label: "Altı Çizili (&n)" },
+  { code: "m", icon: Strikethrough, label: "Üstü Çizili (&m)" },
+  { code: "k", icon: Sparkles, label: "Karışık / Obfuscated (&k)" },
 ];
 
 const PRESETS: { name: string; value: string }[] = [
   {
     name: "Klasik",
-    value: "§6§lBLOCKBOUND §8» §fPremium Minecraft Sunucusu\n§7Sürüm §a1.21 §7• §bshop.blockbound.gg",
+    value: "&6&lBLOCKBOUND &8» &fPremium Minecraft Sunucusu\n&7Sürüm &a1.21 &7• &bshop.blockbound.gg",
   },
   {
     name: "Etkinlik",
-    value: "§c§l✦ YAZ ETKİNLİĞİ BAŞLADI ✦\n§e%50 indirim §7ve §dözel kozmetikler §7seni bekliyor!",
+    value: "&c&l✦ YAZ ETKİNLİĞİ BAŞLADI ✦\n&e%50 indirim &7ve &dözel kozmetikler &7seni bekliyor!",
   },
   {
     name: "Bakım",
-    value: "§4§lBAKIM MODU\n§7Kısa süre içinde geri döneceğiz §8| §7takipte kal",
+    value: "&4&lBAKIM MODU\n&7Kısa süre içinde geri döneceğiz &8| &7takipte kal",
   },
   {
-    name: "Renkli",
-    value: "§bB§3l§9o§1c§5k§db§5o§9u§3n§bd §8• §aSurvival §7| §eSkyblock §7| §cPvP\n§7Hemen katıl: §fplay.blockbound.gg",
+    name: "RGB Gradyan",
+    value: "&#00E5FF&lB&#22C9FF&ll&#44AEFF&lo&#6692FF&lc&#8877FF&lk&#AA5BFF&lb&#BC49F5&lo&#CE37EB&lu&#E025E1&ln&#F213D7&ld\n&7play.blockbound.gg",
   },
 ];
 
 const OBF_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#@%&$?!/\\|";
+
 
 const colorFor = (code: string) => COLORS.find((c) => c.code === code)?.hex;
 
