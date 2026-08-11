@@ -86,7 +86,7 @@ const shadowFor = (hex: string) => {
 
 type Token = { color?: string; styles: string[]; text: string; br?: boolean };
 
-// Render text with §-codes into styled tokens for the preview.
+// Render text with &-codes (and &#RRGGBB hex codes) into styled tokens for the preview.
 const tokenize = (text: string): Token[] => {
   const tokens: Token[] = [];
   let color: string | undefined;
@@ -99,6 +99,14 @@ const tokenize = (text: string): Token[] => {
   for (let i = 0; i < text.length; i++) {
     const ch = text[i];
     if ((ch === "§" || ch === "&") && i + 1 < text.length) {
+      // &#RRGGBB custom hex color
+      const hexMatch = /^#([0-9a-fA-F]{6})/.exec(text.slice(i + 1, i + 8));
+      if (hexMatch) {
+        flush();
+        color = `#${hexMatch[1]}`;
+        i += 7;
+        continue;
+      }
       const code = text[i + 1].toLowerCase();
       const valid = code === "r" || !!colorFor(code) || ["l", "o", "n", "m", "k"].includes(code);
       if (!valid) {
@@ -127,7 +135,9 @@ const tokenize = (text: string): Token[] => {
   return tokens;
 };
 
-const stripCodes = (s: string) => s.replace(/[§&][0-9a-fk-orA-FK-OR]/g, "");
+const stripCodes = (s: string) =>
+  s.replace(/[§&]#[0-9a-fA-F]{6}/g, "").replace(/[§&][0-9a-fk-orA-FK-OR]/g, "");
+
 
 const MotdLine = ({ tokens, tick }: { tokens: Token[]; tick: number }) => (
   <>
