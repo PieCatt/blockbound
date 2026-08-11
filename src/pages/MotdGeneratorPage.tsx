@@ -44,33 +44,34 @@ const COLORS: { code: string; name: string; hex: string }[] = [
 ];
 
 const FORMATS = [
-  { code: "l", icon: Bold, label: "Kalın (§l)" },
-  { code: "o", icon: Italic, label: "İtalik (§o)" },
-  { code: "n", icon: Underline, label: "Altı Çizili (§n)" },
-  { code: "m", icon: Strikethrough, label: "Üstü Çizili (§m)" },
-  { code: "k", icon: Sparkles, label: "Karışık / Obfuscated (§k)" },
+  { code: "l", icon: Bold, label: "Kalın (&l)" },
+  { code: "o", icon: Italic, label: "İtalik (&o)" },
+  { code: "n", icon: Underline, label: "Altı Çizili (&n)" },
+  { code: "m", icon: Strikethrough, label: "Üstü Çizili (&m)" },
+  { code: "k", icon: Sparkles, label: "Karışık / Obfuscated (&k)" },
 ];
 
 const PRESETS: { name: string; value: string }[] = [
   {
     name: "Klasik",
-    value: "§6§lBLOCKBOUND §8» §fPremium Minecraft Sunucusu\n§7Sürüm §a1.21 §7• §bshop.blockbound.gg",
+    value: "&6&lBLOCKBOUND &8» &fPremium Minecraft Sunucusu\n&7Sürüm &a1.21 &7• &bshop.blockbound.gg",
   },
   {
     name: "Etkinlik",
-    value: "§c§l✦ YAZ ETKİNLİĞİ BAŞLADI ✦\n§e%50 indirim §7ve §dözel kozmetikler §7seni bekliyor!",
+    value: "&c&l✦ YAZ ETKİNLİĞİ BAŞLADI ✦\n&e%50 indirim &7ve &dözel kozmetikler &7seni bekliyor!",
   },
   {
     name: "Bakım",
-    value: "§4§lBAKIM MODU\n§7Kısa süre içinde geri döneceğiz §8| §7takipte kal",
+    value: "&4&lBAKIM MODU\n&7Kısa süre içinde geri döneceğiz &8| &7takipte kal",
   },
   {
-    name: "Renkli",
-    value: "§bB§3l§9o§1c§5k§db§5o§9u§3n§bd §8• §aSurvival §7| §eSkyblock §7| §cPvP\n§7Hemen katıl: §fplay.blockbound.gg",
+    name: "RGB Gradyan",
+    value: "&#00E5FF&lB&#22C9FF&ll&#44AEFF&lo&#6692FF&lc&#8877FF&lk&#AA5BFF&lb&#BC49F5&lo&#CE37EB&lu&#E025E1&ln&#F213D7&ld\n&7play.blockbound.gg",
   },
 ];
 
 const OBF_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#@%&$?!/\\|";
+
 
 const colorFor = (code: string) => COLORS.find((c) => c.code === code)?.hex;
 
@@ -85,7 +86,7 @@ const shadowFor = (hex: string) => {
 
 type Token = { color?: string; styles: string[]; text: string; br?: boolean };
 
-// Render text with §-codes into styled tokens for the preview.
+// Render text with &-codes (and &#RRGGBB hex codes) into styled tokens for the preview.
 const tokenize = (text: string): Token[] => {
   const tokens: Token[] = [];
   let color: string | undefined;
@@ -98,6 +99,14 @@ const tokenize = (text: string): Token[] => {
   for (let i = 0; i < text.length; i++) {
     const ch = text[i];
     if ((ch === "§" || ch === "&") && i + 1 < text.length) {
+      // &#RRGGBB custom hex color
+      const hexMatch = /^#([0-9a-fA-F]{6})/.exec(text.slice(i + 1, i + 8));
+      if (hexMatch) {
+        flush();
+        color = `#${hexMatch[1]}`;
+        i += 7;
+        continue;
+      }
       const code = text[i + 1].toLowerCase();
       const valid = code === "r" || !!colorFor(code) || ["l", "o", "n", "m", "k"].includes(code);
       if (!valid) {
@@ -126,7 +135,9 @@ const tokenize = (text: string): Token[] => {
   return tokens;
 };
 
-const stripCodes = (s: string) => s.replace(/[§&][0-9a-fk-orA-FK-OR]/g, "");
+const stripCodes = (s: string) =>
+  s.replace(/[§&]#[0-9a-fA-F]{6}/g, "").replace(/[§&][0-9a-fk-orA-FK-OR]/g, "");
+
 
 const MotdLine = ({ tokens, tick }: { tokens: Token[]; tick: number }) => (
   <>
@@ -171,6 +182,9 @@ const MotdGeneratorPage = () => {
   const [maxPlayers, setMaxPlayers] = useState(1000);
   const [darkList, setDarkList] = useState(true);
   const [tick, setTick] = useState(0);
+  const [customColor, setCustomColor] = useState("#7C4DFF");
+  const [gradFrom, setGradFrom] = useState("#00E5FF");
+  const [gradTo, setGradTo] = useState("#F213D7");
   const areaRef = useRef<HTMLTextAreaElement>(null);
   const historyRef = useRef<string[]>([]);
 
@@ -180,11 +194,11 @@ const MotdGeneratorPage = () => {
     if (desc)
       desc.setAttribute(
         "content",
-        "Minecraft sunucu MOTD'unu renk kodlarıyla tasarla, gerçek sunucu listesi görünümünde canlı önizle ve server.properties için tek tıkla kopyala."
+        "Minecraft sunucu MOTD'unu &renk kodları ve &#RRGGBB özel renklerle tasarla, sunucu listesi görünümünde canlı önizle ve tek tıkla kopyala."
       );
   }, []);
 
-  // animate obfuscated (§k) text
+  // animate obfuscated (&k) text
   const hasObf = text.includes("§k") || text.includes("&k");
   useEffect(() => {
     if (!hasObf) return;
@@ -204,10 +218,9 @@ const MotdGeneratorPage = () => {
     setText(next);
   }, [text]);
 
-  // Insert a code at the caret position (or at the end).
-  const insert = (code: string) => {
+  // Insert a raw snippet at the caret position (or at the end).
+  const insertRaw = (snippet: string) => {
     const el = areaRef.current;
-    const snippet = "§" + code;
     if (!el) {
       push(text + snippet);
       return;
@@ -221,6 +234,8 @@ const MotdGeneratorPage = () => {
       el.setSelectionRange(start + snippet.length, start + snippet.length);
     });
   };
+
+  const insert = (code: string) => insertRaw("&" + code);
 
   const undo = () => {
     const prev = historyRef.current.pop();
@@ -237,7 +252,7 @@ const MotdGeneratorPage = () => {
         let i = 0;
         return plain
           .split("")
-          .map((ch) => (ch === " " ? ch : `§${order[i++ % order.length]}${ch}`))
+          .map((ch) => (ch === " " ? ch : `&${order[i++ % order.length]}${ch}`))
           .join("");
       })
       .join("\n");
@@ -245,14 +260,52 @@ const MotdGeneratorPage = () => {
     toast.success("Gökkuşağı uygulandı");
   };
 
+  // Birdflop-style two-color hex gradient across each line.
+  const gradient = () => {
+    const hex2rgb = (h: string) => {
+      const n = parseInt(h.replace("#", ""), 16);
+      return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+    };
+    const [r1, g1, b1] = hex2rgb(gradFrom);
+    const [r2, g2, b2] = hex2rgb(gradTo);
+    const next = text
+      .split("\n")
+      .map((line) => {
+        const plain = stripCodes(line);
+        const chars = plain.split("");
+        const steps = Math.max(chars.length - 1, 1);
+        return chars
+          .map((ch, i) => {
+            const t = i / steps;
+            const hex = [r1 + (r2 - r1) * t, g1 + (g2 - g1) * t, b1 + (b2 - b1) * t]
+              .map((v) => Math.round(v).toString(16).padStart(2, "0"))
+              .join("");
+            return `&#${hex.toUpperCase()}${ch}`;
+          })
+          .join("");
+      })
+      .join("\n");
+    push(next);
+    toast.success("Gradyan uygulandı");
+  };
+
   const copy = (value: string, label: string) => {
     navigator.clipboard.writeText(value);
     toast.success(`${label} kopyalandı`);
   };
 
-  const serverProps = `motd=${text.replace(/\n/g, "\\n").replace(/&/g, "§").replace(/§/g, "\\u00A7")}`;
-  const jsonOut = JSON.stringify({ text: text.replace(/&/g, "§") });
+  // Normalize everything to & codes for display/copy.
   const ampOut = text.replace(/§/g, "&");
+  // server.properties: legacy codes → \u00A7X, hex → Spigot \u00A7x\u00A7R\u00A7R...
+  const propsBody = ampOut
+    .replace(/&#([0-9a-fA-F]{6})/g, (_m, h: string) =>
+      "\\u00A7x" + h.split("").map((c) => "\\u00A7" + c).join("")
+    )
+    .replace(/&([0-9a-fk-orA-FK-OR])/g, "\\u00A7$1")
+    .replace(/\n/g, "\\n");
+  const serverProps = `motd=${propsBody}`;
+  const jsonOut = JSON.stringify({ text: ampOut });
+
 
   return (
     <CartProvider>
@@ -282,17 +335,79 @@ const MotdGeneratorPage = () => {
                     <button
                       key={c.code}
                       onClick={() => insert(c.code)}
-                      title={`§${c.code} — ${c.name}`}
+                      title={`&${c.code} — ${c.name}`}
                       className="group relative h-10 rounded-lg border border-border/60 transition-all hover:scale-110 hover:z-10 hover:shadow-glow"
                       style={{ background: c.hex }}
                       aria-label={c.name}
                     >
                       <span className="absolute inset-x-0 -bottom-5 text-[10px] font-mono text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
-                        §{c.code}
+                        &amp;{c.code}
                       </span>
                     </button>
                   ))}
                 </div>
+
+                <div className="h-px bg-border/60" />
+
+                <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                  Özel Renk (&amp;#RRGGBB)
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <input
+                    type="color"
+                    aria-label="Özel renk seç"
+                    value={customColor}
+                    onChange={(e) => setCustomColor(e.target.value.toUpperCase())}
+                    className="h-10 w-12 cursor-pointer rounded-lg border border-border/60 bg-transparent p-1"
+                  />
+                  <Input
+                    value={customColor}
+                    onChange={(e) => setCustomColor(e.target.value.toUpperCase())}
+                    className="w-32 font-mono text-sm"
+                    aria-label="Özel renk hex kodu"
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      /^#[0-9a-fA-F]{6}$/.test(customColor)
+                        ? insertRaw(`&${customColor.toUpperCase()}`)
+                        : toast.error("Geçerli bir hex kodu gir (#RRGGBB)")
+                    }
+                  >
+                    Ekle
+                  </Button>
+                </div>
+
+                <div className="h-px bg-border/60" />
+
+                <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                  Hex Gradyan
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <input
+                    type="color"
+                    aria-label="Gradyan başlangıç rengi"
+                    value={gradFrom}
+                    onChange={(e) => setGradFrom(e.target.value.toUpperCase())}
+                    className="h-10 w-12 cursor-pointer rounded-lg border border-border/60 bg-transparent p-1"
+                  />
+                  <input
+                    type="color"
+                    aria-label="Gradyan bitiş rengi"
+                    value={gradTo}
+                    onChange={(e) => setGradTo(e.target.value.toUpperCase())}
+                    className="h-10 w-12 cursor-pointer rounded-lg border border-border/60 bg-transparent p-1"
+                  />
+                  <div
+                    className="h-10 flex-1 min-w-[100px] rounded-lg border border-border/60"
+                    style={{ background: `linear-gradient(90deg,${gradFrom},${gradTo})` }}
+                  />
+                  <Button variant="outline" size="sm" onClick={gradient}>
+                    <Wand2 className="mr-2 h-4 w-4" /> Uygula
+                  </Button>
+                </div>
+
 
                 <div className="h-px bg-border/60" />
 
@@ -312,8 +427,9 @@ const MotdGeneratorPage = () => {
                     </Button>
                   ))}
                   <Button variant="outline" size="sm" onClick={() => insert("r")}>
-                    Sıfırla §r
+                    Sıfırla &amp;r
                   </Button>
+
                   <Button variant="outline" size="sm" onClick={rainbow}>
                     <Wand2 className="mr-2 h-4 w-4" /> Gökkuşağı
                   </Button>
@@ -346,12 +462,14 @@ const MotdGeneratorPage = () => {
                   onChange={(e) => setText(e.target.value.split("\n").slice(0, 2).join("\n"))}
                   rows={4}
                   className="font-mono text-sm leading-relaxed"
-                  placeholder="§6Welcome to §bMyServer..."
+                  placeholder="&6Welcome to &bMyServer... veya &#FF8800Özel renk"
                 />
                 <p className="text-xs text-muted-foreground">
-                  İpucu: <span className="font-mono text-foreground">&amp;</span> kodları da destekleniyor.
+                  İpucu: <span className="font-mono text-foreground">&amp;#RRGGBB</span> ile özel renk
+                  kullanabilirsin (ör. <span className="font-mono text-foreground">&amp;#FFFFFF</span>).
                   Renk kodu yazınca aktif biçimler sıfırlanır — Minecraft'ta da böyle çalışır.
                 </p>
+
               </div>
 
               <div className="glass-card rounded-2xl p-5 space-y-3">
@@ -491,12 +609,13 @@ const MotdGeneratorPage = () => {
                   <Button variant="hero" onClick={() => copy(serverProps, "server.properties")}>
                     <Copy className="mr-2 h-4 w-4" /> server.properties
                   </Button>
-                  <Button variant="outline" onClick={() => copy(text, "Ham metin (§)")}>
-                    Ham (§)
+                  <Button variant="outline" onClick={() => copy(ampOut, "Ham metin (&)")}>
+                    Ham (&amp;)
                   </Button>
-                  <Button variant="outline" onClick={() => copy(ampOut, "& kodlu metin")}>
-                    &amp; kodlu
+                  <Button variant="outline" onClick={() => copy(stripCodes(text), "Düz metin")}>
+                    Düz metin
                   </Button>
+
                   <Button variant="outline" onClick={() => copy(jsonOut, "JSON")}>
                     JSON
                   </Button>
