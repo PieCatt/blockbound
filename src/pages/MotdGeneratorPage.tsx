@@ -526,7 +526,7 @@ const MotdGeneratorPage = () => {
                         textShadow: "2px 2px 0 rgba(0,0,0,0.5)",
                       }}
                     >
-                      B
+                      {(serverName.trim() || "Minecraft Server").charAt(0).toUpperCase()}
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-start justify-between gap-3">
