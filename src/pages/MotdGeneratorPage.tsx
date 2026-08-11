@@ -335,17 +335,79 @@ const MotdGeneratorPage = () => {
                     <button
                       key={c.code}
                       onClick={() => insert(c.code)}
-                      title={`§${c.code} — ${c.name}`}
+                      title={`&${c.code} — ${c.name}`}
                       className="group relative h-10 rounded-lg border border-border/60 transition-all hover:scale-110 hover:z-10 hover:shadow-glow"
                       style={{ background: c.hex }}
                       aria-label={c.name}
                     >
                       <span className="absolute inset-x-0 -bottom-5 text-[10px] font-mono text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
-                        §{c.code}
+                        &amp;{c.code}
                       </span>
                     </button>
                   ))}
                 </div>
+
+                <div className="h-px bg-border/60" />
+
+                <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                  Özel Renk (&amp;#RRGGBB)
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <input
+                    type="color"
+                    aria-label="Özel renk seç"
+                    value={customColor}
+                    onChange={(e) => setCustomColor(e.target.value.toUpperCase())}
+                    className="h-10 w-12 cursor-pointer rounded-lg border border-border/60 bg-transparent p-1"
+                  />
+                  <Input
+                    value={customColor}
+                    onChange={(e) => setCustomColor(e.target.value.toUpperCase())}
+                    className="w-32 font-mono text-sm"
+                    aria-label="Özel renk hex kodu"
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      /^#[0-9a-fA-F]{6}$/.test(customColor)
+                        ? insertRaw(`&${customColor.toUpperCase()}`)
+                        : toast.error("Geçerli bir hex kodu gir (#RRGGBB)")
+                    }
+                  >
+                    Ekle
+                  </Button>
+                </div>
+
+                <div className="h-px bg-border/60" />
+
+                <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                  Hex Gradyan
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <input
+                    type="color"
+                    aria-label="Gradyan başlangıç rengi"
+                    value={gradFrom}
+                    onChange={(e) => setGradFrom(e.target.value.toUpperCase())}
+                    className="h-10 w-12 cursor-pointer rounded-lg border border-border/60 bg-transparent p-1"
+                  />
+                  <input
+                    type="color"
+                    aria-label="Gradyan bitiş rengi"
+                    value={gradTo}
+                    onChange={(e) => setGradTo(e.target.value.toUpperCase())}
+                    className="h-10 w-12 cursor-pointer rounded-lg border border-border/60 bg-transparent p-1"
+                  />
+                  <div
+                    className="h-10 flex-1 min-w-[100px] rounded-lg border border-border/60"
+                    style={{ background: `linear-gradient(90deg,${gradFrom},${gradTo})` }}
+                  />
+                  <Button variant="outline" size="sm" onClick={gradient}>
+                    <Wand2 className="mr-2 h-4 w-4" /> Uygula
+                  </Button>
+                </div>
+
 
                 <div className="h-px bg-border/60" />
 
