@@ -612,10 +612,10 @@ const MotdGeneratorPage = () => {
                   <Button variant="outline" onClick={() => copy(ampOut, "Ham metin (&)")}>
                     Ham (&amp;)
                   </Button>
-
-                  <Button variant="outline" onClick={() => copy(ampOut, "& kodlu metin")}>
-                    &amp; kodlu
+                  <Button variant="outline" onClick={() => copy(stripCodes(text), "Düz metin")}>
+                    Düz metin
                   </Button>
+
                   <Button variant="outline" onClick={() => copy(jsonOut, "JSON")}>
                     JSON
                   </Button>
