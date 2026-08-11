@@ -609,9 +609,10 @@ const MotdGeneratorPage = () => {
                   <Button variant="hero" onClick={() => copy(serverProps, "server.properties")}>
                     <Copy className="mr-2 h-4 w-4" /> server.properties
                   </Button>
-                  <Button variant="outline" onClick={() => copy(text, "Ham metin (§)")}>
-                    Ham (§)
+                  <Button variant="outline" onClick={() => copy(ampOut, "Ham metin (&)")}>
+                    Ham (&amp;)
                   </Button>
+
                   <Button variant="outline" onClick={() => copy(ampOut, "& kodlu metin")}>
                     &amp; kodlu
                   </Button>
