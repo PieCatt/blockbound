@@ -462,12 +462,14 @@ const MotdGeneratorPage = () => {
                   onChange={(e) => setText(e.target.value.split("\n").slice(0, 2).join("\n"))}
                   rows={4}
                   className="font-mono text-sm leading-relaxed"
-                  placeholder="§6Welcome to §bMyServer..."
+                  placeholder="&6Welcome to &bMyServer... veya &#FF8800Özel renk"
                 />
                 <p className="text-xs text-muted-foreground">
-                  İpucu: <span className="font-mono text-foreground">&amp;</span> kodları da destekleniyor.
+                  İpucu: <span className="font-mono text-foreground">&amp;#RRGGBB</span> ile özel renk
+                  kullanabilirsin (ör. <span className="font-mono text-foreground">&amp;#FFFFFF</span>).
                   Renk kodu yazınca aktif biçimler sıfırlanır — Minecraft'ta da böyle çalışır.
                 </p>
+
               </div>
 
               <div className="glass-card rounded-2xl p-5 space-y-3">
