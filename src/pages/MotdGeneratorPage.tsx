@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import "@south-paw/typeface-minecraft/index.css";
+import "@/styles/minecraft-font.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CartSheet from "@/components/CartSheet";
@@ -514,7 +514,7 @@ const MotdGeneratorPage = () => {
                     style={{
                       background: "rgba(0,0,0,0.55)",
                       borderColor: "#6b6b6b",
-                      fontFamily: "'Minecraft', 'Courier New', monospace",
+                      fontFamily: "'MinecraftSafe', 'Pixelify Sans', 'Courier New', monospace",
                       imageRendering: "pixelated",
                     }}
                   >
