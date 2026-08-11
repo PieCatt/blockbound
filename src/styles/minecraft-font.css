@@ -1,0 +1,15 @@
+/* Minecraft webfont has no Turkish glyphs (ı ö ü ğ ş ç İ ...).
+   Limit it to the ASCII range it actually covers and let a pixel-style
+   latin-ext fallback render everything else. */
+@import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&display=swap");
+
+@font-face {
+  font-family: "MinecraftSafe";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src:
+    url("@south-paw/typeface-minecraft/files/minecraft.woff2") format("woff2"),
+    url("@south-paw/typeface-minecraft/files/minecraft.woff") format("woff");
+  unicode-range: U+0020-007E, U+00A7, U+2022;
+}
