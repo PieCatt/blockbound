@@ -182,6 +182,9 @@ const MotdGeneratorPage = () => {
   const [maxPlayers, setMaxPlayers] = useState(1000);
   const [darkList, setDarkList] = useState(true);
   const [tick, setTick] = useState(0);
+  const [customColor, setCustomColor] = useState("#7C4DFF");
+  const [gradFrom, setGradFrom] = useState("#00E5FF");
+  const [gradTo, setGradTo] = useState("#F213D7");
   const areaRef = useRef<HTMLTextAreaElement>(null);
   const historyRef = useRef<string[]>([]);
 
@@ -191,11 +194,11 @@ const MotdGeneratorPage = () => {
     if (desc)
       desc.setAttribute(
         "content",
-        "Minecraft sunucu MOTD'unu renk kodlarıyla tasarla, gerçek sunucu listesi görünümünde canlı önizle ve server.properties için tek tıkla kopyala."
+        "Minecraft sunucu MOTD'unu &renk kodları ve &#RRGGBB özel renklerle tasarla, sunucu listesi görünümünde canlı önizle ve tek tıkla kopyala."
       );
   }, []);
 
-  // animate obfuscated (§k) text
+  // animate obfuscated (&k) text
   const hasObf = text.includes("§k") || text.includes("&k");
   useEffect(() => {
     if (!hasObf) return;
@@ -215,10 +218,9 @@ const MotdGeneratorPage = () => {
     setText(next);
   }, [text]);
 
-  // Insert a code at the caret position (or at the end).
-  const insert = (code: string) => {
+  // Insert a raw snippet at the caret position (or at the end).
+  const insertRaw = (snippet: string) => {
     const el = areaRef.current;
-    const snippet = "§" + code;
     if (!el) {
       push(text + snippet);
       return;
@@ -232,6 +234,8 @@ const MotdGeneratorPage = () => {
       el.setSelectionRange(start + snippet.length, start + snippet.length);
     });
   };
+
+  const insert = (code: string) => insertRaw("&" + code);
 
   const undo = () => {
     const prev = historyRef.current.pop();
@@ -248,7 +252,7 @@ const MotdGeneratorPage = () => {
         let i = 0;
         return plain
           .split("")
-          .map((ch) => (ch === " " ? ch : `§${order[i++ % order.length]}${ch}`))
+          .map((ch) => (ch === " " ? ch : `&${order[i++ % order.length]}${ch}`))
           .join("");
       })
       .join("\n");
@@ -256,14 +260,52 @@ const MotdGeneratorPage = () => {
     toast.success("Gökkuşağı uygulandı");
   };
 
+  // Birdflop-style two-color hex gradient across each line.
+  const gradient = () => {
+    const hex2rgb = (h: string) => {
+      const n = parseInt(h.replace("#", ""), 16);
+      return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+    };
+    const [r1, g1, b1] = hex2rgb(gradFrom);
+    const [r2, g2, b2] = hex2rgb(gradTo);
+    const next = text
+      .split("\n")
+      .map((line) => {
+        const plain = stripCodes(line);
+        const chars = plain.split("");
+        const steps = Math.max(chars.length - 1, 1);
+        return chars
+          .map((ch, i) => {
+            const t = i / steps;
+            const hex = [r1 + (r2 - r1) * t, g1 + (g2 - g1) * t, b1 + (b2 - b1) * t]
+              .map((v) => Math.round(v).toString(16).padStart(2, "0"))
+              .join("");
+            return `&#${hex.toUpperCase()}${ch}`;
+          })
+          .join("");
+      })
+      .join("\n");
+    push(next);
+    toast.success("Gradyan uygulandı");
+  };
+
   const copy = (value: string, label: string) => {
     navigator.clipboard.writeText(value);
     toast.success(`${label} kopyalandı`);
   };
 
-  const serverProps = `motd=${text.replace(/\n/g, "\\n").replace(/&/g, "§").replace(/§/g, "\\u00A7")}`;
-  const jsonOut = JSON.stringify({ text: text.replace(/&/g, "§") });
+  // Normalize everything to & codes for display/copy.
   const ampOut = text.replace(/§/g, "&");
+  // server.properties: legacy codes → \u00A7X, hex → Spigot \u00A7x\u00A7R\u00A7R...
+  const propsBody = ampOut
+    .replace(/&#([0-9a-fA-F]{6})/g, (_m, h: string) =>
+      "\\u00A7x" + h.split("").map((c) => "\\u00A7" + c).join("")
+    )
+    .replace(/&([0-9a-fk-orA-FK-OR])/g, "\\u00A7$1")
+    .replace(/\n/g, "\\n");
+  const serverProps = `motd=${propsBody}`;
+  const jsonOut = JSON.stringify({ text: ampOut });
+
 
   return (
     <CartProvider>
