@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Download, Gift, Loader2 } from "lucide-react";
 import { useFreeProducts } from "@/hooks/useContent";
 import { FREE_DOWNLOAD_URL } from "@/lib/links";
+import ProductImage from "@/components/ProductImage";
 
 const DESC_LIMIT = 140;
 
@@ -17,11 +18,10 @@ const FreeProductCard = ({ p, i }: { p: any; i: number }) => {
       style={{ animationDelay: `${i * 100}ms` }}
     >
       <div className="relative aspect-[16/10] overflow-hidden bg-secondary/40">
-        <img
+        <ProductImage
           src={p.img}
           alt={p.name}
-          loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          className="w-full h-full object-cover group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-80" />
         {p.badge && (
