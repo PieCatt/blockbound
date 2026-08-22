@@ -1,18 +1,24 @@
-# Ürünler ve Blog Yüklenmeme Sorunu
+# Ürün Görselleri Yüklenirken Animasyonlu Yer Tutucu
 
-## Teşhis
+## Amaç
 
-Ağ isteklerinde `products` ve `posts` sorguları sürekli "Failed to fetch" hatası veriyor ve tekrar deneniyor. Uygulama kodu doğru; sorun Lovable Cloud backend'inin şu anda başlatılıyor / askıda olması (`cloud_status` henüz sağlıklı dönmüyor). Veritabanı API'sine hiç ulaşılamadığı için ana sayfadaki ürünler, ücretsiz ürünler ve blog yazıları boş kalıyor.
+Mağaza (Öne çıkan ürünler) ve Ücretsiz Ürünler bölümlerinde ürün görseli yüklenene kadar, blog kartlarındaki görsel gibi animasyonlu bir yer tutucu göstermek: piksel ızgara (pixel-grid) deseni + gradyan zemin + havada süzülen (animate-float) parlayan küp animasyonu. Görsel yüklenince yumuşak bir geçişle (fade-in) gerçek görsele dönüşür.
 
-## Plan
+## Yapılacaklar
 
-1. **Backend durumunu izle**: `cloud_status` kontrolünü tekrarla; `ACTIVE_HEALTHY` olana kadar bekle.
-2. **Gerekirse yeniden başlat**: Durum takılı kalırsa (INACTIVE / UNHEALTHY / uzun süre COMING_UP) onayınla backend'i yeniden başlat (`restart`) ve tekrar durumu izle.
-3. **Verileri doğrula**: `products` ve `posts` tablolarına sorgu atarak verilerin yerinde olduğunu ve API'nin yanıt verdiğini kontrol et.
-4. **Ön yüzde doğrula**: Preview'da ürünlerin ve blog yazılarının yüklendiğini Playwright ile ekran görüntüsü alarak doğrula.
-5. **Kötü durumda kullanıcı deneyimini iyileştir (küçük kod değişikliği)**: Backend geçici olarak ulaşılamazsa sonsuz yüklenme animasyonu yerine "Şu an içerik yüklenemiyor, sayfayı yenilemeyi deneyin" tarzı bir hata mesajı göster (react-query `isError` durumu). Böylece ileride backend yine başlatılırken site boş spinner'da kalmaz.
+1. **Yeniden kullanılabilir bileşen**: `src/components/ProductImage.tsx`
+   - Props: `src`, `alt`, `className` (hover scale gibi mevcut sınıflar korunur).
+   - İçerik: blog kartındaki görsel bloğun aynısı — `bg-gradient-to-br` gradyan zemin, `pixel-grid` overlay, ortada `bg-gradient-primary` + `shadow-glow` + `animate-float` küp.
+   - `img` için `onLoad` state'i: yüklenene kadar yer tutucu görünür, görsel `opacity-0`; yüklendikten sonra yer tutucu kalkar ve görsel yumuşakça belirir (`transition-opacity`).
+2. **Uygulanacak yerler** (mevcut `<img>` kullanımları bu bileşenle değiştirilecek):
+   - `src/components/Products.tsx` — mağaza kartları (aspect-square).
+   - `src/components/FreeProducts.tsx` — ücretsiz ürün kartları (aspect-[16/10]).
+   - `src/pages/ProductsPage.tsx` — tüm koleksiyon sayfasındaki kartlar (tutarlılık için).
+3. **Davranış korunur**: hover'da büyüme, rozetler (badge/indirim), üstteki gradyan karartma ve tıklama davranışları aynen kalır.
 
 ## Teknik notlar
 
-- Kod tarafında değişiklik: `src/hooks/useContent.ts` sorguları aynı kalır; sadece `Blog`, `Products`, `FreeProducts` (ve ilgili sayfalar) bileşenlerinde `isError` kontrolü eklenir.
-- Herhangi bir şema/veri tabanı değişikliği yapılmayacak.
+- Blog kartındaki görsel stili referans alınır (`src/components/Blog.tsx` içindeki `pixel-grid` + `animate-float` küp bloğu).
+- Yeni CSS gerekmez; mevcut `pixel-grid`, `animate-float`, `bg-gradient-primary`, `shadow-glow` sınıfları kullanılır.
+- Ürünlerde blog'daki gibi ürün bazlı `gradient` alanı olmadığından tek tip tema gradyanı kullanılır.
+- Veritabanı veya veri akışında değişiklik yok.
