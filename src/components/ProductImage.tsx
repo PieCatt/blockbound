@@ -26,7 +26,7 @@ const ProductImage = ({ src, alt, className }: ProductImageProps) => {
         loading="lazy"
         onLoad={() => setLoaded(true)}
         className={cn(
-          "transition-opacity duration-700",
+          "transition-all duration-700",
           loaded ? "opacity-100" : "opacity-0",
           className,
         )}

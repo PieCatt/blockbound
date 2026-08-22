@@ -5,6 +5,7 @@ import { useProducts } from "@/hooks/useContent";
 import { useCart, formatPrice, type Product } from "@/context/CartContext";
 import { getTag, sortByTagPriority } from "@/lib/productTags";
 import ProductDialog from "./ProductDialog";
+import ProductImage from "./ProductImage";
 
 const Products = () => {
   const [showAll, setShowAll] = useState(false);
@@ -46,11 +47,10 @@ const Products = () => {
               style={{ animationDelay: `${i * 80}ms`, ...(tag ? { ["--tag-color" as any]: tag.borderColor } : {}) }}
             >
               <div className="relative aspect-square overflow-hidden bg-secondary/40">
-                <img
+                <ProductImage
                   src={p.img}
                   alt={p.name}
-                  loading="lazy"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  className="w-full h-full object-cover group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-80" />
                 <div className="absolute top-4 left-4 flex flex-col gap-2 items-start">

@@ -5,6 +5,7 @@ import { useProducts } from "@/hooks/useContent";
 import { CartProvider, formatPrice, useCart, type Product } from "@/context/CartContext";
 import { getTag } from "@/lib/productTags";
 import ProductDialog from "@/components/ProductDialog";
+import ProductImage from "@/components/ProductImage";
 import CartSheet from "@/components/CartSheet";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -75,11 +76,10 @@ const Catalog = () => {
             style={{ animationDelay: `${i * 60}ms`, ...(tag ? { ["--tag-color" as any]: tag.borderColor } : {}) }}
           >
             <div className="relative aspect-square overflow-hidden bg-secondary/40">
-              <img
+              <ProductImage
                 src={p.img}
                 alt={p.name}
-                loading="lazy"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                className="w-full h-full object-cover group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-80" />
               <div className="absolute top-4 left-4 flex flex-col gap-2 items-start">
