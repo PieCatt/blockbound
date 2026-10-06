@@ -15,9 +15,6 @@ const Blog = () => {
       <div className="container">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
           <div className="max-w-2xl animate-fade-in-up">
-            <div className="text-sm font-semibold uppercase tracking-widest text-primary-glow mb-4">
-              // Blog
-            </div>
             <h2 className="text-4xl md:text-6xl font-black">
               Son <span className="gradient-text">yazılar</span>
             </h2>

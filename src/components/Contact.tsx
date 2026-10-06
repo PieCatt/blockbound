@@ -29,9 +29,6 @@ const Contact = () => {
       <div className="container">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
           <div className="animate-fade-in-up">
-            <div className="text-sm font-semibold uppercase tracking-widest text-primary-glow mb-4">
-              // İletişim
-            </div>
             <h2 className="text-4xl md:text-6xl font-black mb-6">
               Bize <span className="gradient-text">ulaş</span>
             </h2>

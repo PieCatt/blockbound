@@ -33,9 +33,6 @@ const Catalog = () => {
         <Button variant="ghost" size="sm" asChild className="mb-6">
           <a href="/"><ArrowLeft className="mr-2 h-4 w-4" /> Anasayfa</a>
         </Button>
-        <div className="text-sm font-semibold uppercase tracking-widest text-primary-glow mb-4">
-          // Tüm Koleksiyon
-        </div>
         <h1 className="text-4xl md:text-6xl font-black mb-4">
           Koleksiyonu <span className="gradient-text">keşfet</span>
         </h1>

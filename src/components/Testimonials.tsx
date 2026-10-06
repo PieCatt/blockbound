@@ -26,9 +26,6 @@ const Testimonials = () => {
     <section id="testimonials" className="relative py-12 md:py-16">
       <div className="container">
         <div className="max-w-2xl mb-10 animate-fade-in-up">
-          <div className="text-sm font-semibold uppercase tracking-widest text-primary-glow mb-4">
-            // Topluluk
-          </div>
           <h2 className="text-4xl md:text-6xl font-black mb-4">
             Kullanıcı <span className="gradient-text">yorumları</span>
           </h2>

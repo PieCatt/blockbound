@@ -13,9 +13,6 @@ const About = () => {
       <div className="container">
         <div className="grid lg:grid-cols-2 gap-14 items-center">
           <div className="animate-fade-in-up">
-            <div className="text-sm font-semibold uppercase tracking-widest text-primary-glow mb-4">
-              // Hakkımızda
-            </div>
             <h2 className="text-3xl md:text-4xl font-black mb-6">
               <span className="gradient-text">Hayal et</span>, biz inşa edelim
             </h2>
