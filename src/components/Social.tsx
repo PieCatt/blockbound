@@ -12,9 +12,6 @@ const Social = () => {
     <section id="social" className="relative py-12 md:py-16">
       <div className="container">
         <div className="max-w-2xl mb-16 animate-fade-in-up">
-          <div className="text-sm font-semibold uppercase tracking-widest text-primary-glow mb-4">
-            // Sosyal
-          </div>
           <h2 className="text-4xl md:text-6xl font-black mb-4">
             Bize <span className="gradient-text">katıl</span>
           </h2>

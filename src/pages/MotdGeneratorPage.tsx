@@ -312,9 +312,6 @@ const MotdGeneratorPage = () => {
       <div className="min-h-screen bg-background">
         <Navbar />
         <main className="container pt-28 pb-20">
-          <div className="text-sm font-semibold uppercase tracking-widest text-primary-glow mb-3">
-            // Araçlar
-          </div>
           <h1 className="text-4xl md:text-6xl font-black mb-3">
             MOTD <span className="gradient-text">Generator</span>
           </h1>

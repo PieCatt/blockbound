@@ -141,9 +141,6 @@ const CraftingHelperPage = () => {
       <div className="min-h-screen bg-background">
         <Navbar />
         <main className="container pt-32 pb-16 min-h-[60vh]">
-          <div className="text-sm font-semibold uppercase tracking-widest text-primary-glow mb-4">
-            // Araçlar
-          </div>
           <h1 className="text-4xl md:text-6xl font-black mb-3">
             Crafting <span className="gradient-text">Yardımcısı</span>
           </h1>
