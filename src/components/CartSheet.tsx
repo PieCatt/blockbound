@@ -1,3 +1,4 @@
+import { resolveProductImage } from "@/lib/productDefaults";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
@@ -37,7 +38,7 @@ const CartSheet = () => {
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
               {items.map((item) => (
                 <div key={item.id} className="flex gap-4 p-3 rounded-xl bg-secondary/40 animate-fade-in">
-                  <img src={item.img} alt={item.name} className="h-20 w-20 rounded-lg object-cover" />
+                  <img src={resolveProductImage(item.img)} alt={item.name} className="h-20 w-20 rounded-lg object-cover" />
                   <div className="flex-1 min-w-0">
                     <div className="text-xs text-primary-glow font-semibold uppercase">{item.category}</div>
                     <div className="font-semibold truncate">{item.name}</div>

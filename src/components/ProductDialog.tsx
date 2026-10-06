@@ -1,3 +1,4 @@
+import { resolveProductImage } from "@/lib/productDefaults";
 import { useEffect, useMemo, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -63,7 +64,7 @@ const ProductDialog = ({ product, onClose }: Props) => {
               />
             )}
             <div className="relative aspect-square overflow-hidden">
-              <img src={gallery[active] ?? product.img} alt={product.name} className="w-full h-full object-cover" />
+              <img src={resolveProductImage(gallery[active] ?? product.img)} alt={product.name} className="w-full h-full object-cover" />
               {product.badge && (
                 <span className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold bg-gradient-primary text-primary-foreground shadow-glow">
                   {product.badge}
@@ -85,7 +86,7 @@ const ProductDialog = ({ product, onClose }: Props) => {
                       active === i ? "border-primary-glow" : "border-transparent opacity-70 hover:opacity-100"
                     }`}
                   >
-                    <img src={src} alt={`${product.name} ${i + 1}`} className="w-full h-full object-cover" />
+                    <img src={resolveProductImage(src)} alt={`${product.name} ${i + 1}`} className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>
