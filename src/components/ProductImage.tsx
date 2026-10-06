@@ -1,3 +1,4 @@
+import { resolveProductImage } from "@/lib/productDefaults";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -21,7 +22,7 @@ const ProductImage = ({ src, alt, className }: ProductImageProps) => {
         </div>
       )}
       <img
-        src={src}
+        src={resolveProductImage(src)}
         alt={alt}
         loading="lazy"
         onLoad={() => setLoaded(true)}
