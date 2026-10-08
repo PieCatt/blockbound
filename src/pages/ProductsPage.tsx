@@ -85,6 +85,7 @@ const Catalog = () => {
   const [max, setMax] = useState("");
   const [sort, setSort] = useState<Sort>("featured");
   const [view, setView] = useState<"grid" | "list">("grid");
+  const [picked, setPicked] = useState<string | null>(null);
 
   const catCounts = useMemo(() => {
     const m = new Map<string, number>();
@@ -127,14 +128,54 @@ const Catalog = () => {
     ...(min || max ? [{ label: `${min || 0} – ${max || "∞"} TL`, clear: () => { setMin(""); setMax(""); } }] : []),
   ];
 
+  const pick = (c: string | null) => { reset(); setCats(c ? [c] : []); setPicked(c ?? "__all"); window.scrollTo({ top: 0 }); };
+
+  if (picked === null) {
+    const cards: { key: string | null; label: string; n: number }[] = [
+      ...catCounts.map(([c, n]) => ({ key: c, label: c, n })),
+      { key: null, label: "Tüm Ürünler", n: products.length },
+    ];
+    return (
+      <section className="container pt-28 pb-16">
+        <nav className="text-sm text-muted-foreground mb-4" aria-label="breadcrumb">
+          <a href="/" className="hover:text-foreground">Anasayfa</a> <span className="mx-2">/</span> <span className="text-foreground">Ürünler</span>
+        </nav>
+        <h1 className="text-4xl md:text-5xl font-black mb-2">Bir <span className="gradient-text">kategori</span> seç</h1>
+        <p className="text-muted-foreground mb-10">Göz atmak istediğin kategoriyi seç.</p>
+        {isLoading ? (
+          <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary-glow" /></div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {cards.map((c) => (
+              <button key={c.label} onClick={() => pick(c.key)}
+                className={`group text-left glass-card glow-border rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-elegant ${c.key === null ? "bg-gradient-primary/10 border border-primary/40" : ""}`}>
+                <div className="relative h-28 mb-5 rounded-xl overflow-hidden bg-secondary/40">
+                  <div className="absolute inset-0 pixel-grid opacity-60" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-14 h-14 bg-gradient-primary rounded-xl shadow-glow group-hover:scale-110 transition-transform" />
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold mb-1 group-hover:gradient-text">{c.label}</h3>
+                <p className="text-sm text-muted-foreground">{c.n} ürün</p>
+              </button>
+            ))}
+          </div>
+        )}
+      </section>
+    );
+  }
+
   return (
     <section className="container pt-28 pb-16">
       <nav className="text-sm text-muted-foreground mb-4" aria-label="breadcrumb">
-        <a href="/" className="hover:text-foreground">Anasayfa</a> <span className="mx-2">/</span> <span className="text-foreground">Ürünler</span>
+        <a href="/" className="hover:text-foreground">Anasayfa</a> <span className="mx-2">/</span>
+        <button onClick={() => setPicked(null)} className="hover:text-foreground">Ürünler</button> <span className="mx-2">/</span>
+        <span className="text-foreground">{picked === "__all" ? "Tüm Ürünler" : picked}</span>
       </nav>
+      <Button variant="ghost" size="sm" className="mb-4 -ml-2" onClick={() => setPicked(null)}>← Kategorilere dön</Button>
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-4xl md:text-5xl font-black mb-2">Tüm <span className="gradient-text">Ürünler</span></h1>
+          <h1 className="text-4xl md:text-5xl font-black mb-2">{picked === "__all" ? <>Tüm <span className="gradient-text">Ürünler</span></> : <span className="gradient-text">{picked}</span>}</h1>
           <p className="text-muted-foreground">Premium fiziksel ürünlerden dijital içeriklere kadar tüm Blockbound koleksiyonu.</p>
         </div>
         <div className="relative w-full md:w-80">
