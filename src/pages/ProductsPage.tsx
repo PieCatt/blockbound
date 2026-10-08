@@ -12,6 +12,7 @@ import ProductImage from "@/components/ProductImage";
 import CartSheet from "@/components/CartSheet";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { DISCORD_URL } from "@/lib/links";
 
 type Sort = "featured" | "new" | "price-asc" | "price-desc" | "discount" | "name";
 
@@ -272,9 +273,12 @@ const Catalog = () => {
                         </div>
                         <div className="flex gap-2">
                           <Button variant="outline" size="icon" className="h-9 w-9" aria-label="Ürünü incele" onClick={() => setSelected(p)}><Eye className="h-4 w-4" /></Button>
-                          <Button variant="hero" size="sm" onClick={() => addToCart(p)}><ShoppingCart className="h-4 w-4 sm:mr-1.5" /><span className="hidden sm:inline">Sepete Ekle</span></Button>
+                          <Button variant="outline" size="sm" onClick={() => addToCart(p)}><ShoppingCart className="h-4 w-4 sm:mr-1.5" /><span className="hidden sm:inline">Sepete Ekle</span></Button>
                         </div>
                       </div>
+                      <Button variant="hero" size="sm" className="w-full mt-3" asChild>
+                        <a href={DISCORD_URL} target="_blank" rel="noopener noreferrer">Satın Al</a>
+                      </Button>
                     </div>
                   </article>
                 );
