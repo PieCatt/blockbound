@@ -25,18 +25,18 @@
       }
       #app-loader .loader-icon::after {
         content: ""; position: absolute; inset: 0;
-        background-image: repeating-linear-gradient(135deg,
-          hsl(210 100% 60%) 0px, hsl(190 100% 65%) 25px, hsl(175 90% 55%) 50px, hsl(220 100% 65%) 75px,
-          hsl(265 90% 70%) 100px, hsl(290 95% 70%) 125px, hsl(230 100% 70%) 150px, hsl(195 100% 65%) 175px, hsl(210 100% 60%) 200px);
-        background-size: 282.84px 282.84px;
+        background-image: repeating-linear-gradient(45deg,
+          hsl(210 100% 60%) 0px, hsl(190 100% 65%) 50px, hsl(175 90% 55%) 100px, hsl(220 100% 65%) 150px,
+          hsl(265 90% 70%) 200px, hsl(290 95% 70%) 250px, hsl(230 100% 70%) 300px, hsl(195 100% 65%) 350px, hsl(210 100% 60%) 400px);
+        background-size: 565.69px 565.69px;
         -webkit-mask: url(/loader-icon.png) center / contain no-repeat;
                 mask: url(/loader-icon.png) center / contain no-repeat;
         mix-blend-mode: color;
-        animation: loader-slide 2.2s linear infinite;
+        animation: loader-slide 4.4s linear infinite;
       }
       @keyframes loader-slide {
         from { background-position: 0 0; }
-        to { background-position: 282.84px 0; }
+        to { background-position: 565.69px 0; }
       }
     </style>
   </head>
