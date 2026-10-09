@@ -38,11 +38,23 @@
         from { background-position: 0 0; }
         to { background-position: 565.69px 0; }
       }
+      #app-loader .loader-row { display: flex; align-items: center; }
+      #app-loader .loader-icon { flex-shrink: 0; }
+      #app-loader .loader-text {
+        display: inline-block; overflow: hidden; white-space: nowrap;
+        max-width: 0; margin-left: 0; opacity: 0;
+        color: #e6edf7; font-family: ui-sans-serif, system-ui, sans-serif;
+        font-size: 1.75rem; font-weight: 700; letter-spacing: -0.01em;
+        animation: loader-text-in 0.8s cubic-bezier(0.4,0,0.2,1) 0.6s forwards;
+      }
+      @keyframes loader-text-in {
+        to { max-width: 260px; margin-left: 1.5rem; opacity: 1; }
+      }
     </style>
   </head>
 
   <body>
-    <div id="app-loader" aria-label="Yükleniyor"><div class="loader-icon"></div></div>
+    <div id="app-loader" aria-label="Yükleniyor"><div class="loader-row"><div class="loader-icon"></div><span class="loader-text">Yükleniyor..</span></div></div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
