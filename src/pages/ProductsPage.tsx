@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Eye, LayoutGrid, List, Loader2, PackageSearch, Search, ShoppingCart, SlidersHorizontal, X } from "lucide-react";
-import { useProducts } from "@/hooks/useContent";
+import { useCategoryImages, useProducts } from "@/hooks/useContent";
 import { CartProvider, formatPrice, useCart, type Product } from "@/context/CartContext";
 import { getTag, PRODUCT_TAGS } from "@/lib/productTags";
 import ProductDialog from "@/components/ProductDialog";
@@ -78,6 +78,7 @@ const Catalog = () => {
   const [selected, setSelected] = useState<Product | null>(null);
   const { addToCart } = useCart();
   const { data: products = [], isLoading } = useProducts();
+  const { data: catImages = {} } = useCategoryImages();
   const [q, setQ] = useState("");
   const [cats, setCats] = useState<string[]>([]);
   const [tags, setTags] = useState<string[]>([]);
@@ -151,10 +152,16 @@ const Catalog = () => {
               <button key={c.label} onClick={() => pick(c.key)}
                 className={`group text-left glass-card glow-border rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-elegant ${c.key === null ? "bg-gradient-primary/10 border border-primary/40" : ""}`}>
                 <div className="relative h-28 mb-5 rounded-xl overflow-hidden bg-secondary/40">
-                  <div className="absolute inset-0 pixel-grid opacity-60" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-14 h-14 bg-gradient-primary rounded-xl shadow-glow group-hover:scale-110 transition-transform" />
-                  </div>
+                  {c.key && catImages[c.key] ? (
+                    <img src={catImages[c.key]} alt={c.label} loading="lazy" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  ) : (
+                    <>
+                      <div className="absolute inset-0 pixel-grid opacity-60" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-14 h-14 bg-gradient-primary rounded-xl shadow-glow group-hover:scale-110 transition-transform" />
+                      </div>
+                    </>
+                  )}
                 </div>
                 <h3 className="text-xl font-bold mb-1 group-hover:gradient-text">{c.label}</h3>
                 <p className="text-sm text-muted-foreground">{c.n} ürün</p>

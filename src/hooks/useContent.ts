@@ -82,3 +82,15 @@ export const usePosts = () =>
       return (data ?? []) as Post[];
     },
   });
+
+export const useCategoryImages = () =>
+  useQuery({
+    queryKey: ["category-images"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("categories").select("name,image_url");
+      if (error) throw error;
+      const map: Record<string, string> = {};
+      (data ?? []).forEach((r) => { if (r.image_url) map[r.name] = r.image_url; });
+      return map;
+    },
+  });
