@@ -2,7 +2,7 @@ import { Blocks, Globe2, Sparkles, Users } from "lucide-react";
 
 const stats = [
   { icon: Users, label: "Topluluk", value: "10K+" },
-  { icon: Blocks, label: "Tasarım", value: "5+" },
+  { icon: Blocks, label: "Ürün", value: "5+" },
   { icon: Globe2, label: "Ülke", value: "40+" },
   { icon: Sparkles, label: "Yıl Deneyim", value: "6+" },
 ];
