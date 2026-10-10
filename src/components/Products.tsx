@@ -24,7 +24,7 @@ const Products = () => {
             Öne çıkan <span className="gradient-text">ürünler</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            Topluluğun en sevdiği koleksiyon parçaları, premium figürler ve dijital içerikler.
+            En sevilen ürünler
           </p>
         </div>
 
