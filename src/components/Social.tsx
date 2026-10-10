@@ -16,7 +16,7 @@ const Social = () => {
             Bize <span className="gradient-text">katıl</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            Yeni ürünler, kulis içerikleri ve canlı yayınlar için sosyal kanallarımızı takip et.
+            Yeni ürünler, içerikler ve canlı yayınlar için sosyal kanallarımızı takip et.
           </p>
         </div>
 
