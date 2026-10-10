@@ -20,7 +20,7 @@ const Blog = () => {
             </h2>
           </div>
           <p className="text-muted-foreground max-w-md">
-            Minecraft dünyasından haberler, rehberler, topluluk yapımları ve daha fazlası.
+            Minecraft dünyasından haberler, rehberler ve daha fazlası.
           </p>
         </div>
 
