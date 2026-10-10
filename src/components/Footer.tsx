@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="container grid md:grid-cols-4 gap-10">
         <div className="md:col-span-2">
           <a
-            href="#home"
+            href="/"
             className="logo-mark group relative inline-flex items-center mb-4"
             style={{ ['--logo-src' as never]: `url(${logo})` }}
           >
