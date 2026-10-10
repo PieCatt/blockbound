@@ -43,7 +43,7 @@ const Navbar = () => {
     >
       <div className="container flex items-center justify-between">
         <a
-          href="#home"
+          href="/"
           className="logo-mark group relative inline-flex items-center"
           style={{ ['--logo-src' as never]: `url(${logo})` }}
         >
