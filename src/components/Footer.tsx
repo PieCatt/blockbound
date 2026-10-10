@@ -19,7 +19,7 @@ const Footer = () => {
             <span className="logo-text-overlay" aria-hidden="true" />
           </a>
           <p className="text-muted-foreground max-w-sm">
-            Minecraft severlerin premium koleksiyon ve merch adresi. Blok blok, hayal et — biz inşa edelim.
+            Minecraft severlerin adresi. Blok blok, hayal et — biz inşa edelim.
           </p>
           <div className="flex gap-3 mt-6">
             {[Twitter, Instagram, Youtube, Github].map((Icon, i) => (
