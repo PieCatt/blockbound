@@ -36,7 +36,7 @@ const Hero = () => {
           </h1>
 
           <p className="text-lg md:text-xl text-muted-foreground max-w-xl mb-10 leading-relaxed">
-            Premium Minecraft koleksiyonu, sınırlı sayıda merch ve özel tasarım dijital ürünler. Blockbound Studios — blok blok yaratıcılığın peşinde.
+            Sunucunu kurmak hiç bu kadar kolay olmamıştı. Pluginler, paketler ve konfigürasyonlar, hepsi hazır ve sadece bir tık uzakta.
           </p>
 
           <div className="flex flex-wrap gap-4">
