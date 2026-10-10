@@ -61,8 +61,8 @@ const Hero = () => {
 
           <div className="mt-16 flex flex-wrap gap-8 md:gap-12">
             {[
-              { n: "120K+", l: "Mutlu Oyuncu" },
-              { n: "350+", l: "Eşsiz Ürün" },
+              { n: "10K+", l: "Mutlu Oyuncu" },
+              { n: "5+", l: "Eşsiz Ürün" },
               { n: "4.9★", l: "Müşteri Puanı" },
             ].map((s) => (
               <div key={s.l}>

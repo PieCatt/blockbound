@@ -1,10 +1,10 @@
 import { Blocks, Globe2, Sparkles, Users } from "lucide-react";
 
 const stats = [
-  { icon: Users, label: "Topluluk", value: "120K+" },
-  { icon: Blocks, label: "Tasarım", value: "350+" },
+  { icon: Users, label: "Topluluk", value: "10K+" },
+  { icon: Blocks, label: "Tasarım", value: "5+" },
   { icon: Globe2, label: "Ülke", value: "40+" },
-  { icon: Sparkles, label: "Yıl Deneyim", value: "8+" },
+  { icon: Sparkles, label: "Yıl Deneyim", value: "6+" },
 ];
 
 const About = () => {
@@ -17,10 +17,10 @@ const About = () => {
               <span className="gradient-text">Hayal et</span>, biz inşa edelim
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-              Blockbound Studios; Minecraft topluluğu için premium koleksiyon parçaları, sınırlı seri merch ve özgün dijital içerikler üreten bağımsız bir tasarım stüdyosudur. Her ürünümüz, oyunseverlerin tutkusunu fiziksel ve dijital dünyada yansıtmak için titizlikle tasarlanır.
+              Kozma Network Minecraft sunucusunun kurucularını bünyesinde barındıran BlockBound Studios, 5 yıllık deneyime sahip profesyonel ekibi ile siz değerli oyunculara en kaliteli hizmeti sunmayı hedeflemektedir. Bu bağlamda, sunucu sahiplerinin ve oyuncuların deneyimini en üst seviyeye taşımak için kapsamlı çözümler sunuyoruz.
             </p>
             <p className="text-muted-foreground leading-relaxed">
-              2018'den beri sanatçılar, modelciler ve mühendislerden oluşan ekibimizle topluluğumuza ilham veren yüzlerce ürün hayata geçirdik. Hedefimiz: kaliteyi, yaratıcılığı ve oyun kültürünü tek çatı altında buluşturmak.
+              Ekip olarak, sunucunuzun konfigürasyonlarını optimize etmek, hazır eklenti paketleri ve pluginler ile sunucunuzu güçlendirmek, ayrıca özelleştirilmiş tasarımlar ve görsel içeriklerle sunucunuzu eşsiz kılmak için çalışıyoruz.
             </p>
           </div>
 
