@@ -18,6 +18,8 @@ import AdminPostForm from "./pages/admin/AdminPostForm.tsx";
 import AdminProductsList from "./pages/admin/AdminProductsList.tsx";
 import AdminProductForm from "./pages/admin/AdminProductForm.tsx";
 import AdminCategories from "./pages/admin/AdminCategories.tsx";
+import WikiPage from "./pages/WikiPage.tsx";
+import AdminWiki from "./pages/admin/AdminWiki.tsx";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +46,8 @@ const App = () => (
             <Route path="/admin/products/new" element={<AdminProductForm />} />
             <Route path="/admin/products/:id" element={<AdminProductForm />} />
             <Route path="/admin/categories" element={<AdminCategories />} />
+            <Route path="/wiki" element={<WikiPage />} />
+            <Route path="/admin/wiki" element={<AdminWiki />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
