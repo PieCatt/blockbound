@@ -15,6 +15,7 @@ const links = [
   { href: "/", label: "Anasayfa" },
   { href: "/products", label: "Ürünler" },
   { href: "/blog", label: "Blog" },
+  { href: "/wiki", label: "Wiki" },
 ];
 
 const tools = [

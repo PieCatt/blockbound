@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { Navigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, FileText, Package, LogOut, Loader2, FolderOpen } from "lucide-react";
+import { LayoutDashboard, FileText, Package, LogOut, Loader2, FolderOpen, BookOpen } from "lucide-react";
 
 const AdminLayout = ({ children }: { children: ReactNode }) => {
   const { user, isAdmin, loading, signOut } = useAuth();
@@ -37,6 +37,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
     { to: "/admin/posts", label: "Blog Yazıları", icon: FileText },
     { to: "/admin/products", label: "Ürünler", icon: Package },
     { to: "/admin/categories", label: "Kategoriler", icon: FolderOpen },
+    { to: "/admin/wiki", label: "Wiki", icon: BookOpen },
   ];
 
   return (
