@@ -91,17 +91,18 @@ const WikiContent = () => {
 
       {/* Buzlu cam başlık çubuğu */}
       <div className="sticky top-16 z-30 -mx-4 px-4 py-3 mb-8 bg-background/70 backdrop-blur-xl border-b border-border/40 flex items-center justify-between gap-4">
-        <h1 className="text-2xl md:text-4xl font-black">
+        <h1 className="text-2xl md:text-4xl font-black shrink-0">
           <span className="gradient-text">Wiki</span>
         </h1>
-        <button
-          onClick={() => setPaletteOpen(true)}
-          className="flex items-center gap-2 rounded-lg border border-border/60 bg-secondary/40 hover:bg-secondary/70 transition-colors px-3 py-1.5 text-sm text-muted-foreground"
-        >
-          <Search className="h-4 w-4" />
-          <span className="hidden sm:inline">Ara...</span>
-          <kbd className="text-[10px] border border-border/60 rounded px-1.5 py-0.5">Ctrl K</kbd>
-        </button>
+        <div className="relative flex-1 max-w-xl ml-6">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Wiki'de ara..."
+            className="w-full rounded-md border border-border/60 bg-background/60 pl-9 pr-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary-glow"
+          />
+        </div>
       </div>
 
       <p className="text-lg text-muted-foreground mb-10 max-w-2xl">
@@ -116,15 +117,6 @@ const WikiContent = () => {
         <div className="grid lg:grid-cols-[260px_1fr_200px] gap-8">
           {/* Sol: sayfa listesi (buzlu cam) */}
           <aside className="space-y-6 lg:sticky lg:top-36 self-start rounded-2xl p-4 bg-background/40 backdrop-blur-xl border border-border/40">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <input
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder="Wiki'de ara..."
-                className="w-full rounded-md border border-border/60 bg-background/60 pl-9 pr-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary-glow"
-              />
-            </div>
             {sections.map(([section, items]) => (
               <div key={section}>
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">{section}</div>
