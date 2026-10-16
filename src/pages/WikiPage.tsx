@@ -94,6 +94,14 @@ const WikiContent = () => {
         <h1 className="text-2xl md:text-4xl font-black">
           <span className="gradient-text">Wiki</span>
         </h1>
+        <button
+          onClick={() => setPaletteOpen(true)}
+          className="flex items-center gap-2 rounded-lg border border-border/60 bg-secondary/40 hover:bg-secondary/70 transition-colors px-3 py-1.5 text-sm text-muted-foreground"
+        >
+          <Search className="h-4 w-4" />
+          <span className="hidden sm:inline">Ara...</span>
+          <kbd className="text-[10px] border border-border/60 rounded px-1.5 py-0.5">Ctrl K</kbd>
+        </button>
       </div>
 
       <p className="text-lg text-muted-foreground mb-10 max-w-2xl">
