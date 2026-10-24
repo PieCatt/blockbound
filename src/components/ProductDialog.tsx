@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Check, Headphones, MessageCircle, ShieldCheck, ShoppingCart, Zap } from "lucide-react";
+import { Check, ChevronDown, Headphones, MessageCircle, Play, ShieldCheck, ShoppingCart, Zap } from "lucide-react";
 import { formatPrice, useCart, type Product } from "@/context/CartContext";
 import { DEFAULT_PRODUCT_FEATURES, resolveProductImage } from "@/lib/productDefaults";
 import { DISCORD_URL } from "@/lib/links";
@@ -18,11 +18,20 @@ const TRUST = [
 const ProductDialog = ({ product, onClose }: Props) => {
   const { addToCart } = useCart();
   const gallery = useMemo(() => {
-    if (!product) return [] as string[];
-    return [product.img, ...(product.images ?? [])].filter((v, i, a) => v && a.indexOf(v) === i);
+    if (!product) return [];
+    const images = [product.img, ...(product.images ?? [])]
+      .filter((v, i, a) => v && a.indexOf(v) === i)
+      .map((src) => ({ type: "image" as const, src }));
+    return product.embed_html?.trim()
+      ? [{ type: "embed" as const, html: product.embed_html }, ...images]
+      : images;
   }, [product]);
   const [active, setActive] = useState(0);
-  useEffect(() => setActive(0), [product?.id]);
+  const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+  useEffect(() => {
+    setActive(0);
+    setDescriptionExpanded(false);
+  }, [product?.id]);
 
   if (!product) return null;
 
@@ -30,6 +39,7 @@ const ProductDialog = ({ product, onClose }: Props) => {
   const hasDiscount = product.original_price != null && product.original_price > product.price;
   const discountPct = hasDiscount ? Math.round((1 - product.price / (product.original_price as number)) * 100) : 0;
   const paragraphs = (product.description || "").split(/\n+/).map((s) => s.trim()).filter(Boolean);
+  const activeMedia = gallery[active];
 
   return (
     <Dialog open={!!product} onOpenChange={(o) => !o && onClose()}>
@@ -37,24 +47,31 @@ const ProductDialog = ({ product, onClose }: Props) => {
         <div className="grid md:grid-cols-[1.05fr_1fr]">
           {/* Görseller */}
           <div className="bg-secondary/30 md:border-r border-border/40">
-            {product.embed_html && (
-              <div className="w-full aspect-video bg-background [&_iframe]:w-full [&_iframe]:h-full [&_video]:w-full [&_video]:h-full"
-                dangerouslySetInnerHTML={{ __html: product.embed_html }} />
-            )}
             <div className="relative aspect-square overflow-hidden">
-              <img src={resolveProductImage(gallery[active] ?? product.img)} alt={product.name} className="w-full h-full object-cover" />
-              <div className="absolute top-4 left-4 flex gap-2">
+              {activeMedia?.type === "embed" ? (
+                <div className="absolute inset-0 flex items-center justify-center bg-background [&>iframe]:w-full [&>iframe]:h-full [&>video]:w-full [&>video]:h-full [&>video]:object-contain [&>div]:w-full [&>div]:h-full [&_iframe]:w-full [&_iframe]:h-full [&_video]:w-full [&_video]:h-full"
+                  dangerouslySetInnerHTML={{ __html: activeMedia.html }} />
+              ) : (
+                <img src={resolveProductImage(activeMedia?.src ?? product.img)} alt={product.name} className="w-full h-full object-cover" />
+              )}
+              <div className="absolute top-4 left-4 flex gap-2 pointer-events-none">
                 {product.badge && <span className="px-3 py-1 rounded-full text-xs font-bold bg-gradient-primary text-primary-foreground shadow-glow">{product.badge}</span>}
                 {hasDiscount && <span className="px-2 py-1 rounded-md text-xs font-black bg-destructive text-destructive-foreground">-%{discountPct}</span>}
               </div>
             </div>
             {gallery.length > 1 && (
               <div className="flex gap-2 p-3 overflow-x-auto">
-                {gallery.map((src, i) => (
-                  <button key={src + i} onClick={() => setActive(i)} aria-label={`Görsel ${i + 1}`}
-                    className={`shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition ${active === i ? "border-primary-glow" : "border-transparent opacity-60 hover:opacity-100"}`}>
-                    <img src={resolveProductImage(src)} alt="" className="w-full h-full object-cover" />
-                  </button>
+                {gallery.map((media, i) => (
+                  <Button variant="ghost" size="icon" key={i} onClick={() => setActive(i)}
+                    aria-label={media.type === "embed" ? "Video önizlemesi" : `Görsel ${i + 1}`}
+                    aria-pressed={active === i}
+                    className={`shrink-0 w-16 h-16 p-0 rounded-lg overflow-hidden border-2 transition ${active === i ? "border-primary-glow" : "border-transparent opacity-60 hover:opacity-100"}`}>
+                    {media.type === "embed" ? (
+                      <span className="w-full h-full flex items-center justify-center bg-secondary text-primary-glow"><Play className="h-6 w-6" /></span>
+                    ) : (
+                      <img src={resolveProductImage(media.src)} alt="" className="w-full h-full object-cover" />
+                    )}
+                  </Button>
                 ))}
               </div>
             )}
@@ -100,7 +117,17 @@ const ProductDialog = ({ product, onClose }: Props) => {
                 <TabsTrigger value="features">Özellikler</TabsTrigger>
               </TabsList>
               <TabsContent value="desc" className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
-                {paragraphs.length ? paragraphs.map((p, i) => <p key={i}>{p}</p>) : <p>Bu ürün için henüz açıklama eklenmedi.</p>}
+                <div id="product-description" className={descriptionExpanded ? "space-y-3" : "line-clamp-3 space-y-3"}>
+                  {paragraphs.length ? paragraphs.map((p, i) => <p key={i}>{p}</p>) : <p>Bu ürün için henüz açıklama eklenmedi.</p>}
+                </div>
+                {paragraphs.length > 0 && (
+                  <Button variant="link" size="sm" className="px-0 text-primary-glow"
+                    aria-expanded={descriptionExpanded} aria-controls="product-description"
+                    onClick={() => setDescriptionExpanded((expanded) => !expanded)}>
+                    {descriptionExpanded ? "Daha az oku" : "Devamını oku"}
+                    <ChevronDown className={`h-4 w-4 transition-transform duration-300 motion-reduce:transition-none ${descriptionExpanded ? "rotate-180" : ""}`} />
+                  </Button>
+                )}
               </TabsContent>
               <TabsContent value="features" className="mt-4">
                 <ul className="space-y-2.5 text-sm">
