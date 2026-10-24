@@ -5,12 +5,13 @@ import Footer from "@/components/Footer";
 import CartSheet from "@/components/CartSheet";
 import { CartProvider } from "@/context/CartContext";
 import WikiSearch from "@/components/wiki/WikiSearch";
+import WikiTableOfContents from "@/components/wiki/WikiTableOfContents";
+import { Button } from "@/components/ui/button";
 import { WikiArticleBody, extractHeadings, readingTime } from "@/lib/wikiContent";
 import { useWikiPages } from "@/hooks/useWiki";
 
 const WikiContent = () => {
   const { data: pages = [], isLoading } = useWikiPages();
-  const [q, setQ] = useState("");
   const [activeId, setActiveId] = useState<string | null>(null);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -41,40 +42,36 @@ const WikiContent = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, [activeId, pages]);
 
-  const filtered = useMemo(() => {
-    const s = q.trim().toLocaleLowerCase("tr");
-    if (!s) return pages;
-    return pages.filter((p) =>
-      (p.title + " " + p.content).toLocaleLowerCase("tr").includes(s),
-    );
-  }, [pages, q]);
-
   const sections = useMemo(() => {
     const m = new Map<string, typeof pages>();
-    filtered.forEach((p) => m.set(p.section, [...(m.get(p.section) ?? []), p]));
+    pages.forEach((p) => m.set(p.section, [...(m.get(p.section) ?? []), p]));
     return Array.from(m.entries());
-  }, [filtered]);
+  }, [pages]);
 
-  const active = pages.find((p) => p.id === activeId) ?? filtered[0];
+  const active = pages.find((p) => p.id === activeId) ?? pages[0];
   const headings = useMemo(() => (active ? extractHeadings(active.content) : []), [active]);
 
   useEffect(() => {
-    if (headings.length === 0) { setTocActive(null); return; }
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((en) => { if (en.isIntersecting) setTocActive(en.target.id); });
-      },
-      { rootMargin: "-100px 0px -70% 0px" },
-    );
-    headings.forEach((h) => {
-      const el = document.getElementById(h.id);
-      if (el) obs.observe(el);
-    });
-    return () => obs.disconnect();
+    const updateHeading = () => {
+      let current = headings[0]?.id ?? null;
+      for (const heading of headings) {
+        const element = document.getElementById(heading.id);
+        if (element && element.getBoundingClientRect().top <= 165) current = heading.id;
+      }
+      setTocActive(current);
+    };
+    updateHeading();
+    window.addEventListener("scroll", updateHeading, { passive: true });
+    return () => window.removeEventListener("scroll", updateHeading);
   }, [headings]);
 
   const goToHeading = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const heading = document.getElementById(id);
+    if (!heading) return;
+    const trigger = heading.closest("button[aria-expanded='false']");
+    if (trigger instanceof HTMLElement) trigger.click();
+    setTocActive(id);
+    heading.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth", block: "start" });
   };
 
   return (
@@ -94,15 +91,17 @@ const WikiContent = () => {
         <h1 className="text-2xl md:text-4xl font-black shrink-0">
           <span className="gradient-text">Wiki</span>
         </h1>
-        <div className="relative flex-1 max-w-xl ml-6">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Wiki'de ara..."
-            className="w-full rounded-md border border-border/60 bg-background/60 pl-9 pr-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary-glow"
-          />
-        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setPaletteOpen(true)}
+          aria-haspopup="dialog"
+          aria-expanded={paletteOpen}
+          className="w-44 sm:w-64 justify-start border-border/60 bg-background/60 text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
+        >
+          <Search className="h-4 w-4" />
+          Wiki'de ara...
+        </Button>
       </div>
 
       <p className="text-lg text-muted-foreground mb-10 max-w-2xl">
@@ -154,25 +153,8 @@ const WikiContent = () => {
           )}
 
           {/* Sağ: dinamik içindekiler */}
-          {headings.length > 0 && (
-            <aside className="hidden xl:block self-start sticky top-36 rounded-2xl p-4 bg-background/40 backdrop-blur-xl border border-border/40">
-              <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">İçindekiler</div>
-              <div className="space-y-1">
-                {headings.map((h) => (
-                  <button
-                    key={h.id}
-                    onClick={() => goToHeading(h.id)}
-                    className={`block w-full text-left text-sm px-3 py-1.5 rounded-md border-l-2 transition-colors ${
-                      tocActive === h.id
-                        ? "border-primary-glow text-foreground bg-secondary/50"
-                        : "border-transparent text-muted-foreground hover:text-foreground hover:bg-secondary/30"
-                    }`}
-                  >
-                    {h.text}
-                  </button>
-                ))}
-              </div>
-            </aside>
+          {headings.length > 0 && active && (
+            <WikiTableOfContents headings={headings} activeId={tocActive} articleId={active.id} onSelect={goToHeading} />
           )}
         </div>
       )}

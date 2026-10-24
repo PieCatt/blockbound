@@ -37,8 +37,11 @@ const WikiSearch = ({ open, onClose, onSelect }: Props) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 px-4" onClick={onClose}>
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-background/60 backdrop-blur-sm" />
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Wiki araması"
         className="relative w-full max-w-xl rounded-2xl border border-border/50 bg-background/80 backdrop-blur-xl shadow-2xl overflow-hidden animate-fade-in"
         onClick={(e) => e.stopPropagation()}
       >
